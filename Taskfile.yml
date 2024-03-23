@@ -1,0 +1,39 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv:
+  - .env
+
+tasks:
+  tidy:
+    cmds:
+      - go mod tidy
+
+  format-check:
+    cmds:
+      - goimports -e -l .
+
+  format:
+    cmds:
+      - goimports -w .
+
+  lint:
+    cmds:
+      - golangci-lint run
+
+  build:
+    cmds:
+      - goreleaser build --snapshot --clean {{.CLI_ARGS}}
+
+  dev:
+    cmds:
+      - wgo -file .go task build -- --single-target --skip before
+
+  run:
+    cmds:
+      - go run ./main.go {{.CLI_ARGS}}
+
+  add-command:
+    cmds:
+      - scf ./templates/command ./internal/cmd

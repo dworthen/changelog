@@ -1,0 +1,57 @@
+{
+  "name": "@d-dev/changelog",
+  "version": "0.0.1",
+  "description": "NPM installer for https://github.com/dworthen/changelog",
+  "type": "module",
+  "files": [
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bin-install"
+  },
+  "bin-install": {
+    "archive": "https://github.com/dworthen/changelog/releases/latest/download/scf_{{os}}_{{arch}}{{archiveExt}}",
+    "binary": "scf{{binaryExt}}",
+    "variables": {
+      "version": "1.1.1"
+    },
+    "os": {
+      "win32": "Windows",
+      "linux": "Linux",
+      "darwin": "Darwin"
+    },
+    "arch": {
+      "Windows": {
+        "x64": "x86_64",
+        "arm64": "arm64"
+      },
+      "Linux": {
+        "x64": "x86_64",
+        "arm64": "arm64"
+      },
+      "Darwin": {
+        "x64": "x86_64",
+        "arm64": "arm64"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dworthen/changelog.git"
+  },
+  "keywords": [
+    "Project",
+    "Scaffolding"
+  ],
+  "author": "Derek Worthen <worthend.derek@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dworthen/changelog/issues"
+  },
+  "homepage": "https://github.com/dworthen/changelog#readme",
+  "dependencies": {
+    "@d-dev/bin-install": "^0.1.0"
+  }
+}

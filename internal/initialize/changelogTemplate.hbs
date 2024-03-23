@@ -1,0 +1,25 @@
+## {{version}}
+{{#if majorChanges}}
+
+### Major Changes
+
+{{#each majorChanges}}
+- {{shortSha}}: {{description}}
+{{~/each}}
+{{/if}}
+{{#if minorChanges}}
+
+### Minor Changes
+
+{{#each minorChanges}}
+- {{shortSha}}: {{description}}
+{{~/each}}
+{{/if}}
+{{#if patchChanges}}
+
+### Patch Changes
+
+{{#each patchChanges}}
+- {{shortSha}}: {{description}}
+{{/each}}
+{{~/if}}

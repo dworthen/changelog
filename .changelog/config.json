@@ -1,0 +1,17 @@
+{
+  "version": "6",
+  "bumpFiles": [
+    {
+      "file": "c",
+      "path": "n"
+    }
+  ],
+  "onAdd": {
+    "commitFiles": true
+  },
+  "onApply": {
+    "commitFiles": true,
+    "tagCommit": true,
+    "tagFormat": "v{{version}}"
+  }
+}

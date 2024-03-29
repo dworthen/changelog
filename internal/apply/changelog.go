@@ -117,7 +117,7 @@ func loadFile(filePath string) (ChangeDescription, error) {
 
 	var matter FrontMatter
 	desc, err := frontmatter.Parse(strings.NewReader(string(fileContents)), &matter)
-	description := string(desc)
+	description := strings.TrimSpace(string(desc))
 	description = strings.ReplaceAll(description, "\r\n", "\n")
 	descriptionLines := strings.Split(description, "\n")
 	if len(descriptionLines) > 1 {

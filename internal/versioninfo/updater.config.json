@@ -1,21 +1,21 @@
 {
-  "version": "0.0.0",
-  "archive": "changelog_{{.Os}}_{{.Arch}}{{.ArchiveExt}}",
-  "binary": "changelog{{.Ext}}",
-  "os": {
-    "linux": "Linux",
-    "darwin": "Darwin",
-    "windows": "Windows"
-  },
   "arch": {
-    "Windows": {
+    "Darwin": {
       "amd64": "x86_64"
     },
     "Linux": {
       "amd64": "x86_64"
     },
-    "Darwin": {
+    "Windows": {
       "amd64": "x86_64"
     }
-  }
+  },
+  "archive": "changelog_{{.Os}}_{{.Arch}}{{.ArchiveExt}}",
+  "binary": "changelog{{.Ext}}",
+  "os": {
+    "darwin": "Darwin",
+    "linux": "Linux",
+    "windows": "Windows"
+  },
+  "version": "0.1.1"
 }

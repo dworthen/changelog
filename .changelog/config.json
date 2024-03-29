@@ -4,6 +4,10 @@
     {
       "file": "package.json",
       "path": "version"
+    },
+    {
+      "file": "internal/versioninfo/updater.config.json",
+      "path": "version"
     }
   ],
   "onAdd": {

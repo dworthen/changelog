@@ -116,13 +116,14 @@ do {
 } while (Test-Path $tempDir)
 
 
-$platformDict = @{ 
+$platformDict = @{
 	Windows = "Windows"
   # Windows = "Windows"
 }
 
-$archDict = @{ 
+$archDict = @{
 	AMD64 = "x86_64"
+  ARM64 = "arm64"
   # windows_AMD64 = "x86_64"
 }
 

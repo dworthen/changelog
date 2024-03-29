@@ -11,13 +11,12 @@ downloadUrl=$releasesUrl/download/{TAG}/$archive
 declare -A platformDict=(
 	["Darwin"]="Darwin"
 	["Linux"]="Linux"
-    # ["Linux"]="Linux"
-    # ["Darwin"]="Darwin"
 )
 
 declare -A archDict=(
 	["x86_64"]="x86_64"
-    # ["x86_64"]="x86_64"
+  ["aarch64"]="arm64"
+  ["arm64"]="arm64"
 )
 
 help() {

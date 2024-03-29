@@ -1,3 +1,13 @@
+## 0.1.2
+
+### Patch Changes
+
+- d187e72: Fix package.json
+  
+- cb9536e: Trim space of descriptions
+  
+- 456697b: Remove printing changelog description
+
 ## 0.1.1
 
 ### Patch Changes

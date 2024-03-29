@@ -1,5 +1,5 @@
 {
-  "author": "Derek Worthen <worthend.derek@gmail.com>",
+  "author": "Derek Worthen \u003cworthend.derek@gmail.com\u003e",
   "bin-install": {
     "arch": {
       "Darwin": {
@@ -50,8 +50,8 @@
   },
   "scripts": {
     "postinstall": "bin-install",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" \u0026\u0026 exit 1"
   },
   "type": "module",
-  "version": "0.1.1"
+  "version": "0.1.2"
 }

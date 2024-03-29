@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type BumpInfo struct {
@@ -75,30 +76,38 @@ func (c *Config) Save() error {
 }
 
 var conf *Config
+var once sync.Once
 
 func GetConfig() (*Config, error) {
-	if conf != nil {
-		return conf, nil
-	}
+	var errMsg string = ""
+	once.Do(func() {
+		conf = newConfig()
+		fileLocation, err := filepath.Abs(".changelog/config.json")
+		if err != nil {
+			errMsg = err.Error()
+			return
+		}
 
-	fileLocation, err := filepath.Abs(".changelog/config.json")
-	if err != nil {
-		return nil, err
-	}
+		_, err = os.Stat(fileLocation)
+		if err != nil {
+			return
+		}
 
-	_, err = os.Stat(fileLocation)
-	if err != nil {
-		return newConfig(), nil
-	}
+		fileContents, err := os.ReadFile(fileLocation)
+		if err != nil {
+			errMsg = err.Error()
+			return
+		}
 
-	fileContents, err := os.ReadFile(fileLocation)
-	if err != nil {
-		return nil, err
-	}
+		err = json.Unmarshal(fileContents, &conf)
+		if err != nil {
+			errMsg = err.Error()
+			return
+		}
+	})
 
-	err = json.Unmarshal(fileContents, &conf)
-	if err != nil {
-		return nil, err
+	if errMsg != "" {
+		return nil, fmt.Errorf("Failed to load config. %s", errMsg)
 	}
 
 	return conf, nil

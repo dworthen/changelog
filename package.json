@@ -1,57 +1,57 @@
 {
-  "name": "@d-dev/changelog",
-  "version": "0.0.1",
+  "author": "Derek Worthen \u003cworthend.derek@gmail.com\u003e",
+  "bin-install": {
+    "arch": {
+      "Darwin": {
+        "arm64": "arm64",
+        "x64": "x86_64"
+      },
+      "Linux": {
+        "arm64": "arm64",
+        "x64": "x86_64"
+      },
+      "Windows": {
+        "arm64": "arm64",
+        "x64": "x86_64"
+      }
+    },
+    "archive": "https://github.com/dworthen/changelog/releases/latest/download/scf_{{os}}_{{arch}}{{archiveExt}}",
+    "binary": "scf{{binaryExt}}",
+    "os": {
+      "darwin": "Darwin",
+      "linux": "Linux",
+      "win32": "Windows"
+    },
+    "variables": {
+      "version": "1.1.1"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/dworthen/changelog/issues"
+  },
+  "dependencies": {
+    "@d-dev/bin-install": "^0.1.0"
+  },
   "description": "NPM installer for https://github.com/dworthen/changelog",
-  "type": "module",
   "files": [
     "README.md",
     "package.json"
   ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "bin-install"
-  },
-  "bin-install": {
-    "archive": "https://github.com/dworthen/changelog/releases/latest/download/scf_{{os}}_{{arch}}{{archiveExt}}",
-    "binary": "scf{{binaryExt}}",
-    "variables": {
-      "version": "1.1.1"
-    },
-    "os": {
-      "win32": "Windows",
-      "linux": "Linux",
-      "darwin": "Darwin"
-    },
-    "arch": {
-      "Windows": {
-        "x64": "x86_64",
-        "arm64": "arm64"
-      },
-      "Linux": {
-        "x64": "x86_64",
-        "arm64": "arm64"
-      },
-      "Darwin": {
-        "x64": "x86_64",
-        "arm64": "arm64"
-      }
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dworthen/changelog.git"
-  },
+  "homepage": "https://github.com/dworthen/changelog#readme",
   "keywords": [
     "Project",
     "Scaffolding"
   ],
-  "author": "Derek Worthen <worthend.derek@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dworthen/changelog/issues"
+  "name": "@d-dev/changelog",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dworthen/changelog.git"
   },
-  "homepage": "https://github.com/dworthen/changelog#readme",
-  "dependencies": {
-    "@d-dev/bin-install": "^0.1.0"
-  }
+  "scripts": {
+    "postinstall": "bin-install",
+    "test": "echo \"Error: no test specified\" \u0026\u0026 exit 1"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }

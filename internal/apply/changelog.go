@@ -126,7 +126,6 @@ func loadFile(filePath string) (ChangeDescription, error) {
 		}
 	}
 	description = strings.Join(descriptionLines, "\n")
-	fmt.Println(description)
 
 	if err != nil {
 		return changeDescription, err

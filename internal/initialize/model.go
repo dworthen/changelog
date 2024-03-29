@@ -144,7 +144,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case common.CompletedMsg:
 		m.State = StateCompleted
-		// return m, tea.Quit
+		return m, tea.Quit
 	case common.ErrorMsg:
 		m.State = StateError
 		m.err = msg.Err

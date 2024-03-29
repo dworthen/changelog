@@ -1,3 +1,9 @@
+## 0.1.3
+
+### Patch Changes
+
+- 9570754: Add arm support for install scripts
+
 ## 0.1.2
 
 ### Patch Changes

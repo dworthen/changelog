@@ -7,6 +7,7 @@ import (
 	"github.com/dworthen/changelog/internal/cmd/applycmd"
 	"github.com/dworthen/changelog/internal/cmd/initcmd"
 	"github.com/dworthen/changelog/internal/cmd/updatecmd"
+	"github.com/dworthen/changelog/internal/cmd/versioncmd"
 	"github.com/spf13/cobra"
 )
 
@@ -33,6 +34,7 @@ func init() {
 	rootCmd.AddCommand(addcmd.AddCmd)
 	rootCmd.AddCommand(applycmd.ApplyCmd)
 	rootCmd.AddCommand(updatecmd.UpdateCmd)
+	rootCmd.AddCommand(versioncmd.VersionCmd)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

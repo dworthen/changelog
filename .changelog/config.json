@@ -1,9 +1,9 @@
 {
-  "version": "6",
+  "version": "0.0.0",
   "bumpFiles": [
     {
-      "file": "c",
-      "path": "n"
+      "file": "package.json",
+      "path": "version"
     }
   ],
   "onAdd": {

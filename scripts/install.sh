@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-archive=scf_{PLATFORM}_{ARCH}{ARCHIVE_EXT}
+archive=changelog_{PLATFORM}_{ARCH}{ARCHIVE_EXT}
 repoUrl=https://github.com/dworthen/changelog
 releasesUrl=$repoUrl/releases
 downloadUrl=$releasesUrl/download/{TAG}/$archive

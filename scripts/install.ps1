@@ -102,7 +102,7 @@ if((Test-Path $to) -and (-Not (Test-Path $to -PathType Container))) {
   throw "${to} exists and is not a directory."
 }
 
-$archive="scf_{PLATFORM}_{ARCH}{ARCHIVE_EXT}"
+$archive="changelog_{PLATFORM}_{ARCH}{ARCHIVE_EXT}"
 $repoUrl="https://github.com/dworthen/changelog"
 $releasesUrl="${repoUrl}/releases"
 $downloadUrl="${releasesUrl}/download/{TAG}/${archive}"

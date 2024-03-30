@@ -10,6 +10,14 @@ tasks:
     cmds:
       - go mod tidy
 
+  changelog-add:
+    cmds:
+      - changelog add
+
+  changelog-apply:
+    cmds:
+      - changelog apply
+
   format-check:
     cmds:
       - goimports -e -l .

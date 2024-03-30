@@ -2,6 +2,7 @@ package applycmd
 
 import (
 	"github.com/dworthen/changelog/internal/apply"
+	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
 
@@ -10,6 +11,8 @@ var ApplyCmd = &cobra.Command{
 	Short: "Description",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := apply.Apply()
+		cobra.CheckErr(err)
+		err = versioninfo.PrintAvailableUpdate()
 		cobra.CheckErr(err)
 	},
 }

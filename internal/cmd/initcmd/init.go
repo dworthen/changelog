@@ -3,6 +3,7 @@ package initcmd
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dworthen/changelog/internal/initialize"
+	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
 
@@ -11,6 +12,8 @@ var InitCmd = &cobra.Command{
 	Short: "Initialize project to use changelog",
 	Run: func(cmd *cobra.Command, args []string) {
 		_, err := tea.NewProgram(initialize.NewModel(), tea.WithAltScreen()).Run()
+		cobra.CheckErr(err)
+		err = versioninfo.PrintAvailableUpdate()
 		cobra.CheckErr(err)
 	},
 }

@@ -3,6 +3,7 @@ package addcmd
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dworthen/changelog/internal/add"
+	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
 
@@ -11,6 +12,8 @@ var AddCmd = &cobra.Command{
 	Short: "Description",
 	Run: func(cmd *cobra.Command, args []string) {
 		_, err := tea.NewProgram(add.NewModel(), tea.WithAltScreen()).Run()
+		cobra.CheckErr(err)
+		err = versioninfo.PrintAvailableUpdate()
 		cobra.CheckErr(err)
 	},
 }

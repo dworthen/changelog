@@ -1,3 +1,9 @@
+## 0.1.5
+
+### Patch Changes
+
+- 1f75f93: Check for updates when running commands
+
 ## 0.1.4
 
 ### Patch Changes

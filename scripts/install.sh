@@ -15,8 +15,8 @@ declare -A platformDict=(
 
 declare -A archDict=(
 	["x86_64"]="x86_64"
-  ["aarch64"]="arm64"
-  ["arm64"]="arm64"
+    ["aarch64"]="arm64"
+    ["arm64"]="arm64"
 )
 
 help() {

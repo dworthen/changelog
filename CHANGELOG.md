@@ -1,3 +1,9 @@
+## 0.1.6
+
+### Patch Changes
+
+- 252c652: fix package.json referencing wrong binary name.
+
 ## 0.1.5
 
 ### Patch Changes

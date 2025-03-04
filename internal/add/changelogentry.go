@@ -3,7 +3,6 @@ package add
 import (
 	_ "embed"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
@@ -60,7 +59,7 @@ func (c *changelogEntry) Save() error {
 	_, err := os.Stat(dir)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf(".changelog directory does not exist in working directory. Please run `changelog init` first.")
+			return fmt.Errorf("%s directory does not exist in working directory. Please run `changelog init` first.", dir)
 		} else {
 			return err
 		}
@@ -68,32 +67,31 @@ func (c *changelogEntry) Save() error {
 
 	fileContents, err := raymond.Render(changelogEntryTemplate, c)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error saving changelog entry. Failed to render template: %w", err)
 	}
 
 	err = os.WriteFile(fileLocation, []byte(fileContents), 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error saving changelog entry. Failed to write file: %w", err)
 	}
 
 	configData, err := config.LoadConfig()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error saving changelog entry. Failed to load config: %w", err)
 	}
 
 	commitFiles := configData.GetOnAddCommitFiles()
 	if commitFiles {
 		relFileLocation, err := filepath.Rel(utils.GetCWD(), fileLocation)
 		if err != nil {
-			slog.Error("Error getting relative file location", "error", err)
-			return err
+			return fmt.Errorf("Error saving changelog entry. Failed to get relative file location for changelog entry: %w", err)
 		}
 		err = gitmanage.CommitFiles([]string{relFileLocation}, c.Description)
 		if err != nil {
 			if gitmanage.IsGitNotInitializedError(err) {
-				return fmt.Errorf("This project is configured to commit files after `changelog add` but git is not initialized. Please run `git init` first.")
+				return fmt.Errorf("Error saving changelog entry. This project is configured to commit files after `changelog add` but git is not initialized. Please run `git init` first.")
 			}
-			return err
+			return fmt.Errorf("Error saving changelog entry. Failed to commit files: %w", err)
 		}
 	}
 

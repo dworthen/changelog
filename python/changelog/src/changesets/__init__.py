@@ -32,7 +32,10 @@ def get_path() -> Path:
 def run() -> None:
     path = get_path()
     path.chmod(0o774)
-    subprocess.run([path, *sys.argv[1:]], check=True)
+    try:
+        subprocess.run([path, *sys.argv[1:]], check=True)
+    except subprocess.CalledProcessError as e:
+        sys.exit(e.returncode)
 
 
 if __name__ == "__main__":

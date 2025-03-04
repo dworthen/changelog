@@ -18,10 +18,8 @@ func newChangeTypeForm() (tea.Model, error) {
 
 	onComplete := func() tea.Cmd {
 		return func() tea.Msg {
-			slog.Debug("Command Start: forms.newChangeTypeForm.OnComplete", "changeType", changeType)
 			changelogEntry.SetChange(changeType)
 			returnMsg := pipelineStepCompleteMsg{}
-			slog.Debug("Command End: forms.newChangeTypeForm.OnComplete returning msg", "changelogEntry", changelogEntry, "msg", spew.Sdump(returnMsg))
 			return returnMsg
 		}
 	}

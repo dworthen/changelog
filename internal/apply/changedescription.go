@@ -40,13 +40,13 @@ func loadChangeDescriptions(files ...string) ([]changeDescription, error) {
 
 		fileContents, err := os.ReadFile(fullPath)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Error loading changelog entries. Failed to read file %s. Error: %w", fullPath, err)
 		}
 
 		var fm frontMatter
 		desc, err := frontmatter.Parse(strings.NewReader(string(fileContents)), &fm)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Error loading changelog entries. Failed to parse frontmatter in file %s. Error: %w", fullPath, err)
 		}
 		description := strings.TrimSpace(string(desc))
 		description = strings.ReplaceAll(description, "\r\n", "\n")

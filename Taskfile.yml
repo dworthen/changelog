@@ -39,6 +39,10 @@ tasks:
     cmds:
       - golangci-lint run
 
+  changelog-check:
+    cmds:
+      - go run ./main.go check
+
   build-go:
     cmds:
       - go tool goreleaser build {{.CLI_ARGS}}

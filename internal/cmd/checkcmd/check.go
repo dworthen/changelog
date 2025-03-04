@@ -11,7 +11,8 @@ import (
 
 var CheckCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Description",
+	Short: "Check that the current branch or last commit contains a changelog entry. Useful for CI workflows to enforce the presence of changelog entries.",
+	Long:  "Check that the current branch or last commit contains a changelog entry. Useful for CI workflows to enforce the presence of changelog entries.",
 	Run: func(cmd *cobra.Command, args []string) {
 		hasChangelogEntry, err := gitmanage.LastCommitContainsChangelogEntry()
 		utils.CheckError(err)

@@ -1,3 +1,9 @@
+## 0.4.0
+
+### Minor Changes
+
+- 769a886: Migrate to bubbletea application
+
 ## 0.1.6
 
 ### Patch Changes

@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.11"
 
 [manifest]
@@ -20,7 +21,7 @@ source = { virtual = "." }
 
 [[package]]
 name = "changesets"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/changelog" }
 dependencies = [
     { name = "changesets-darwin-arm64", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
@@ -43,30 +44,30 @@ requires-dist = [
 
 [[package]]
 name = "changesets-darwin-arm64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/darwin-arm64" }
 
 [[package]]
 name = "changesets-darwin-x64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/darwin-x64" }
 
 [[package]]
 name = "changesets-linux-arm64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/linux-arm64" }
 
 [[package]]
 name = "changesets-linux-x64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/linux-x64" }
 
 [[package]]
 name = "changesets-win32-arm64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/win32-arm64" }
 
 [[package]]
 name = "changesets-win32-x64"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "python/win32-x64" }

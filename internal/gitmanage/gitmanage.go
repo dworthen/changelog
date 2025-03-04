@@ -1,8 +1,8 @@
 package gitmanage
 
 import (
+	"errors"
 	"fmt"
-	"log/slog"
 	"path/filepath"
 	"sync"
 
@@ -24,8 +24,7 @@ func NewGitNotInitializedError() error {
 }
 
 func IsGitNotInitializedError(err error) bool {
-	_, ok := err.(*GitNotInitializedError)
-	return ok
+	return errors.Is(err, &GitNotInitializedError{})
 }
 
 var gitRepoInstance *git.Repository
@@ -52,7 +51,7 @@ func GetGitRepo() (*git.Repository, string, error) {
 				getGitRepoErr = NewGitNotInitializedError()
 				return
 			}
-			getGitRepoErr = err
+			getGitRepoErr = fmt.Errorf("Error opening git repository: %w", err)
 			return
 		}
 
@@ -72,25 +71,27 @@ func CommitFiles(files []string, description string) error {
 
 	relDir, err := filepath.Rel(repoDirectory, cwd)
 	if err != nil {
-		slog.Error("Error getting relative file location", "error", err)
-		return err
+		return fmt.Errorf("Error committing files. Failed to get relative file location for %s from %s. Error: %w", repoDirectory, cwd, err)
 	}
 
 	worktree, err := repo.Worktree()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error committing files. Failed to get worktree: %w", err)
 	}
 
 	for _, file := range files {
 		fileLocation := utils.JoinPaths(relDir, file)
 		_, err = worktree.Add(fileLocation)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error committing files. Failed to add file to worktree. %s. Error: %w", fileLocation, err)
 		}
 	}
 
 	_, err = worktree.Commit(description, &git.CommitOptions{})
-	return err
+	if err != nil {
+		return fmt.Errorf("Error committing files. Failed to commit files: %w", err)
+	}
+	return nil
 }
 
 func GetCommitHashForFile(filePath string) (string, error) {
@@ -102,8 +103,7 @@ func GetCommitHashForFile(filePath string) (string, error) {
 
 	relDir, err := filepath.Rel(repoDirectory, cwd)
 	if err != nil {
-		slog.Error("Error getting relative file location", "error", err)
-		return "", err
+		return "", fmt.Errorf("Error getting commit hash for file. Failed to get relative file location for %s from %s. Error: %w", repoDirectory, cwd, err)
 	}
 
 	filePath = utils.JoinPaths(relDir, filePath)
@@ -113,12 +113,12 @@ func GetCommitHashForFile(filePath string) (string, error) {
 		FileName: &filePath,
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error getting commit hash for file. Failed to get commits for file %s: %w", filePath, err)
 	}
 
 	commit, err := commits.Next()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Error getting commit hash for file. Failed to get next commit: %w", err)
 	}
 
 	return commit.Hash.String(), nil
@@ -127,7 +127,7 @@ func GetCommitHashForFile(filePath string) (string, error) {
 func tagExists(tag string, r *git.Repository) (bool, error) {
 	tags, err := r.TagObjects()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error getting tags: %w", err)
 	}
 	res := false
 	err = tags.ForEach(func(t *object.Tag) error {
@@ -160,12 +160,15 @@ func Tag(tag string) error {
 	head, err := repo.Head()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("Error tagging commit. Failed to get HEAD: %w", err)
 	}
 	_, err = repo.CreateTag(tag, head.Hash(), &git.CreateTagOptions{
 		Message: tag,
 	})
-	return err
+	if err != nil {
+		return fmt.Errorf("Error tagging commit. Failed to create tag %s. Error: %w", tag, err)
+	}
+	return nil
 }
 
 func getMainBranchCommit() (*object.Commit, error) {
@@ -176,7 +179,7 @@ func getMainBranchCommit() (*object.Commit, error) {
 
 	branches, err := repo.Branches()
 	if err != nil {
-		return nil, utils.WithStackTrace(err)
+		return nil, fmt.Errorf("Error getting main branch commit. Failed to get branches: %w", err)
 	}
 
 	var mainReference *plumbing.Reference
@@ -191,14 +194,14 @@ func getMainBranchCommit() (*object.Commit, error) {
 	if mainReference == nil {
 		head, err := repo.Head()
 		if err != nil {
-			return nil, utils.WithStackTrace(err)
+			return nil, fmt.Errorf("Error getting main branch commit. Failed to get HEAD: %w", err)
 		}
 		mainReference = head
 	}
 
 	commitObject, err := repo.CommitObject(mainReference.Hash())
 	if err != nil {
-		return nil, utils.WithStackTrace(err)
+		return nil, fmt.Errorf("Error getting main branch commit. Failed to get commit object for hash: %s. Error: %w", mainReference.Hash(), err)
 	}
 	return commitObject, nil
 }
@@ -211,31 +214,31 @@ func LastCommitContainsChangelogEntry() (bool, error) {
 
 	relChangelogDir, err := filepath.Rel(repoDir, utils.GetChangelogDirPath())
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error getting last commit changelog entry. Failed to get relative path for %s from %s. Error: %w", utils.GetChangelogDirPath(), repoDir, err)
 	}
 
 	pattern := filepath.ToSlash(filepath.Join(relChangelogDir, "*.md"))
 
 	head, err := repo.Head()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error getting last commit changelog entry. Failed to get HEAD: %w", err)
 	}
 
 	headCommit, err := repo.CommitObject(head.Hash())
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error getting last commit changelog entry. Failed to get commit object for hash: %s. Error: %w", head.Hash(), err)
 	}
 
 	parentCommit, err := getMainBranchCommit()
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("Error getting last commit changelog entry. Failed to get main branch commit: %w", err)
 	}
 
 	if headCommit.Hash.String() == parentCommit.Hash.String() {
 		parentHash := parentCommit.ParentHashes[0]
 		newParentCommit, err := repo.CommitObject(parentHash)
 		if err != nil {
-			return false, err
+			return false, fmt.Errorf("Error getting last commit changelog entry. Failed to get parent commit object for hash: %s. Error: %w", parentHash, err)
 		}
 		parentCommit = newParentCommit
 	}

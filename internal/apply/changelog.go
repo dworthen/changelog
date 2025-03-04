@@ -94,7 +94,8 @@ func withConfigData() changelogLoaders {
 		configFile := utils.GetConfigFilePath()
 		relativeConfigFile, err := filepath.Rel(cwd, configFile)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading config data. Failed to get relative path for config file %s. Error: %w",
+				configFile, err)
 		}
 		c.ConfigFile = relativeConfigFile
 		c.ChangelogFile = configData.ChangelogFile
@@ -131,17 +132,17 @@ func withChangelogFiles() changelogLoaders {
 	return func(c *changelog) error {
 		cwd, err := os.Getwd()
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog files. Failed to get current working directory. Error: %w", err)
 		}
 		changelogDir := utils.GetChangelogDirPath()
 		relDir, err := filepath.Rel(cwd, changelogDir)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog files. Failed to get relative path for changelog directory %s. Error: %w", changelogDir, err)
 		}
 		changelogEntryPattern := filepath.Join(relDir, "*.md")
 		changelogFiles, err := filepath.Glob(changelogEntryPattern)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog files. Failed to search for file with pattern %s. Error: %w", changelogEntryPattern, err)
 		}
 
 		resolvedChangeLogFiles := []string{}
@@ -149,7 +150,7 @@ func withChangelogFiles() changelogLoaders {
 			fullPath := filepath.Join(cwd, file)
 			relPath, err := filepath.Rel(utils.GetCWD(), fullPath)
 			if err != nil {
-				return err
+				return fmt.Errorf("Error loading changelog files. Failed to get relative path for file %s. Error: %w", fullPath, err)
 			}
 			resolvedChangeLogFiles = append(resolvedChangeLogFiles, relPath)
 		}
@@ -177,7 +178,7 @@ func withChangeDescriptions() changelogLoaders {
 			case "patch":
 				c.PatchChanges = append(c.PatchChanges, cd)
 			default:
-				return fmt.Errorf("invalid change type: %s. Supported types: 'patch', 'minor', 'major'", cd.Change)
+				return fmt.Errorf("Error determining changelog version bump type for %s. Invalid change type: %s. Supported types: 'patch', 'minor', 'major'", cd.FilePath, cd.Change)
 			}
 		}
 
@@ -205,7 +206,7 @@ func withBumpInfo() changelogLoaders {
 
 		ver, err := version.NewSemver(c.OldVersion)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error determining semantic version. Failed to parse version %s. Error: %w", c.OldVersion, err)
 		}
 		verSegments := ver.Segments()
 		if len(verSegments) != 3 {
@@ -231,7 +232,7 @@ func withBumpInfo() changelogLoaders {
 		c.Version = fmt.Sprintf("%d.%d.%d", majorVer, minorVer, patchVer)
 		tag, err := raymond.Render(c.TagFormat, map[string]string{"version": c.Version})
 		if err != nil {
-			return err
+			return fmt.Errorf("Error rendering tag format. Error: %w", err)
 		}
 		c.TagParsed = tag
 
@@ -244,11 +245,11 @@ func withChangelogEntry() changelogLoaders {
 		changelogTemplatePath := utils.GetChangelogTemplatePath()
 		changelogTemplateContents, err := os.ReadFile(changelogTemplatePath)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog template. Failed to read file %s. Error: %w", changelogTemplatePath, err)
 		}
 		changelogEntry, err := raymond.Render(string(changelogTemplateContents), c)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog template. Failed to render changelog template. Error: %w", err)
 		}
 		c.ChangelogEntry = changelogEntry
 		return nil
@@ -259,7 +260,11 @@ func withChangelogEntry() changelogLoaders {
 var summaryTemplate string
 
 func (c *changelog) getSummary() (string, error) {
-	return raymond.Render(summaryTemplate, c)
+	result, err := raymond.Render(summaryTemplate, c)
+	if err != nil {
+		return "", fmt.Errorf("Error rendering summary template. Error: %w", err)
+	}
+	return result, nil
 }
 
 func (c *changelog) updateChangelog() error {
@@ -269,12 +274,12 @@ func (c *changelog) updateChangelog() error {
 	_, err := os.Stat(changelogPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			return err
+			return fmt.Errorf("Error loading changelog file. %s does not exist.", changelogPath)
 		}
 	} else {
 		changelogBytes, err := os.ReadFile(changelogPath)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error loading changelog file. Failed to read file %s. Error: %w", changelogPath, err)
 		}
 		changelogContents = string(changelogBytes)
 	}
@@ -295,22 +300,18 @@ func (c *changelog) apply(writer *iowriters.StdioWriter) error {
 	if err != nil {
 		return err
 	}
-	// filesToCommit = append(filesToCommit, c.ChangelogFile)
 
 	for _, vfm := range c.VersionFileMatches {
 		if err := vfm.bump(c.Version); err != nil {
 			return err
 		}
-		// filesToCommit = append(filesToCommit, vfm.VersionFiles.Path)
 	}
 
 	for _, changelogEntryFile := range c.ChangelogFiles {
 		err := os.Remove(utils.JoinPaths(c.WorkingDirectory, changelogEntryFile))
 		if err != nil {
-			return err
+			return fmt.Errorf("Error removing changelog entry file %s. Error: %w", changelogEntryFile, err)
 		}
-
-		// filesToCommit = append(filesToCommit, changelogEntryFile)
 	}
 
 	configData.SetVersion(c.Version)
@@ -318,20 +319,13 @@ func (c *changelog) apply(writer *iowriters.StdioWriter) error {
 	if err != nil {
 		return err
 	}
-	// configPath := utils.GetConfigFilePath()
-	cwd := utils.GetCWD()
-	// relativeConfigPath, err := filepath.Rel(cwd, configPath)
-	// if err != nil {
-	// 	return err
-	// }
-	// filesToCommit = append(filesToCommit, relativeConfigPath)
 
+	cwd := utils.GetCWD()
 	if len(c.Commands) > 0 {
 		globals.Program.Send(ApplyModelSetStateMsg{
 			State: ApplyModelStateRunningCommands,
 		})
 	}
-
 	for _, command := range c.Commands {
 		cmdToRun := theme.Focused.Title.Render(fmt.Sprintf("%s\n", command))
 		writer.Write([]byte(cmdToRun))

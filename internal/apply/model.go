@@ -91,7 +91,9 @@ func (m applyModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		contents, err := m.changelog.getSummary()
 		if err != nil {
-			return m, common.ErrorMsgCmd(err)
+			m.State = ApplyModelStateError
+			m.err = err
+			return m, nil
 		}
 		cmds := []tea.Cmd{scrollwindow.ScrollWindowSetContentCmd(contents), scrollwindow.ScrollWindowResizeCmd(m.width-borderWidth, m.getScrollWindowHeight())}
 		return m, tea.Batch(cmds...)
@@ -112,8 +114,10 @@ func (m applyModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
 		case "ctrl+c", "esc":
+			slog.Info("applyModel.Update: ctrl+c or esc received. Quitting")
 			return m, tea.Quit
 		case "tab":
+			slog.Info("applyModel.Update: Tab key received. Switching panels")
 			if m.State == ApplyModelStateReviewingScrollWindowActive {
 				m.State = ApplyModelStateReviewingConfirmActive
 				return m, formwrapmodel.FormWrapWithHelpCmd(true)
@@ -123,10 +127,12 @@ func (m applyModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter":
 			if m.State == ApplyModelStateNoChanges {
+				slog.Info("applyModel.Update: Enter key received with no changes to apply. Quitting")
 				return m, tea.Quit
 			}
 		}
 	case helppanel.HelpPanelWithKeysMsg:
+		slog.Info("applyModel.Update: HelpPanelWithKeysMsg received", "msg", spew.Sdump(msg))
 		newHelpPanel, cmd := m.helpPanelModel.Update(msg)
 		m.helpPanelModel = newHelpPanel
 		return m, cmd
@@ -144,16 +150,19 @@ func (m applyModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.State = ApplyModelStateCancelled
 		return m, nil
 	case tea.MouseMsg, scrollwindow.ScrollWindowResizeMsg, scrollwindow.ScrollWindowSetContentMsg, scrollwindow.ScrollWiindowSetTitleMsg:
+		slog.Info("applyModel.Update: ScrollWindowMsg received", "msg", spew.Sdump(msg))
 		newScrollWindow, cmd := m.scrollWindowModel.Update(msg)
 		m.scrollWindowModel = newScrollWindow
 		return m, cmd
 	}
 
 	if m.State == ApplyModelStateReviewingConfirmActive {
+		slog.Info("applyModel.Update: Message received and sending to ConfirmModel", "msg", spew.Sdump(msg))
 		newConfirm, cmd := m.confirmModel.Update(msg)
 		m.confirmModel = newConfirm
 		return m, cmd
 	} else {
+		slog.Info("applyModel.Update: Message received and sending to ScrollWindowModel", "msg", spew.Sdump(msg))
 		newScrollWindow, cmd := m.scrollWindowModel.Update(msg)
 		m.scrollWindowModel = newScrollWindow
 		return m, cmd

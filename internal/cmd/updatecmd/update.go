@@ -3,7 +3,6 @@ package updatecmd
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"os"
 
 	"github.com/dworthen/changelog/internal/utils"
@@ -19,7 +18,6 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update to the latest version of changelog",
 	Long:  "Update to the latest version of changelog",
 	Run: func(cmd *cobra.Command, args []string) {
-		slog.Debug("updatecmd: update called", "args", args)
 		currentVersion, err := versioninfo.GetVersion()
 		utils.CheckError(err)
 		isUpdate, newVersion, err := versioninfo.CheckForUpdate()
@@ -32,15 +30,14 @@ var UpdateCmd = &cobra.Command{
 			if err != nil {
 				var notSupportedError *updater.NotSupportedError
 				if errors.As(err, &notSupportedError) {
-					fmt.Printf("Self updating is not supported for %s. Please reinstall.", notSupportedError.Platform)
+					fmt.Fprintf(os.Stderr, "Self updating is not supported for %s. Please reinstall.", notSupportedError.Platform)
 				} else {
-					fmt.Println(err)
+					fmt.Fprintf(os.Stderr, "Error updating: %v\n", err)
 				}
 				os.Exit(1)
 			}
 			fmt.Printf("Updated to version %s\n", newVersion)
 		}
-		slog.Debug("updatecmd: update completed")
 	},
 }
 

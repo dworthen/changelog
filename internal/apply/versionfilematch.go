@@ -24,9 +24,9 @@ func newVersionFileMatches(vf config.VersionFile, cwd string) ([]versionFileMatc
 		return nil, fmt.Errorf("Invalid version pattern: %s", vf.Pattern)
 	}
 
-	fullpath := utils.JoinPaths(cwd, vf.Path)
+	fullPath := utils.JoinPaths(cwd, vf.Path)
 
-	_, err = os.Stat(fullpath)
+	_, err = os.Stat(fullPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, fmt.Errorf("Version file, %s, does not exist within working directory, %s", vf.Path, cwd)
@@ -34,9 +34,9 @@ func newVersionFileMatches(vf config.VersionFile, cwd string) ([]versionFileMatc
 		return nil, err
 	}
 
-	fileBytes, err := os.ReadFile(fullpath)
+	fileBytes, err := os.ReadFile(fullPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error loading version file. Failed to read %s. Error: %w", fullPath, err)
 	}
 
 	fileContents := string(fileBytes)

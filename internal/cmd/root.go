@@ -18,7 +18,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "changelog",
-	Short: "Description",
+	Short: "Git-based changelog manager for JavaScript, Python, and Go projects.",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -34,6 +34,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initialize)
 
+	rootCmd.Root().CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().StringVarP(&cliflags.CWD, "cwd", "", ".", "project directory for changelog.")
 	rootCmd.PersistentFlags().BoolVarP(&cliflags.Verbose, "verbose", "", false, "enable verbose logging.")
 

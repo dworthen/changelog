@@ -2,11 +2,10 @@ package initialize
 
 import (
 	_ "embed"
-	"log/slog"
+	"fmt"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/dworthen/changelog/internal/config"
 	"github.com/dworthen/changelog/internal/models/common"
 	"github.com/dworthen/changelog/internal/utils"
@@ -41,12 +40,12 @@ func onInitializeCompleteCmd() tea.Cmd {
 				err = os.WriteFile(changelogTemplatePath, changeLogTemplate, 0644)
 				if err != nil {
 					return common.ErrorMsg{
-						Err: err,
+						Err: fmt.Errorf("Error creating changelog template file: %w", err),
 					}
 				}
 			} else {
 				return common.ErrorMsg{
-					Err: err,
+					Err: fmt.Errorf("Error checking for changelog template file: %w", err),
 				}
 			}
 		}
@@ -55,12 +54,11 @@ func onInitializeCompleteCmd() tea.Cmd {
 		err = os.WriteFile(gitignoreTemplatePath, gitignoreTemplate, 0644)
 		if err != nil {
 			return common.ErrorMsg{
-				Err: err,
+				Err: fmt.Errorf("Error creating .gitignore file: %w", err),
 			}
 		}
 
 		returnMsg := pipelineCompleteMsg{}
-		slog.Debug("Command End: initialize.NewInitializeModel.OnComplete - Saved config. Returning msg", "config", configData, "msg", spew.Sdump(returnMsg))
 		return returnMsg
 	}
 }

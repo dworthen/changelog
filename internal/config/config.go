@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"sync"
@@ -58,10 +59,14 @@ func (c *Config) Save() error {
 
 	fileContents, err := yaml.Marshal(c)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error saving config. Failed to marshal config: %w", err)
 	}
 
-	return os.WriteFile(configPath, fileContents, 0644)
+	err = os.WriteFile(configPath, fileContents, 0644)
+	if err != nil {
+		return fmt.Errorf("Error saving config. Failed to write config file: %w", err)
+	}
+	return nil
 }
 
 func (c *Config) SetVersion(version string) {

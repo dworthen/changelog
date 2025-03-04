@@ -24,7 +24,13 @@ async function run() {
   const { default: getBinPath } = await import(supported_platforms.get(key));
   const binPath = getBinPath();
   await chmod(binPath, 0o774);
-  spawn(binPath, args, { stdio: "inherit" });
+  const cp = spawn(binPath, args, { stdio: "inherit" });
+  cp.on("close", (code) => {
+    if (code !== 0) {
+      console.error(`Process exited with code ${code}`);
+      process.exit(code);
+    }
+  });
 }
 
 await run();

@@ -3,8 +3,10 @@ package updatecmd
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/dworthen/changelog/internal/versioninfo"
 
 	"github.com/dworthen/updater"
@@ -17,10 +19,11 @@ var UpdateCmd = &cobra.Command{
 	Short: "Update to the latest version of changelog",
 	Long:  "Update to the latest version of changelog",
 	Run: func(cmd *cobra.Command, args []string) {
+		slog.Debug("updatecmd: update called", "args", args)
 		currentVersion, err := versioninfo.GetVersion()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
 		isUpdate, newVersion, err := versioninfo.CheckForUpdate()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
 		if !isUpdate {
 			fmt.Printf("Current version, %s, is the latest. Nothing to update.\n", currentVersion)
 		} else {
@@ -37,6 +40,7 @@ var UpdateCmd = &cobra.Command{
 			}
 			fmt.Printf("Updated to version %s\n", newVersion)
 		}
+		slog.Debug("updatecmd: update completed")
 	},
 }
 

@@ -1,0 +1,72 @@
+version = 1
+requires-python = ">=3.11"
+
+[manifest]
+members = [
+    "changelog-app",
+    "changesets",
+    "changesets-darwin-arm64",
+    "changesets-darwin-x64",
+    "changesets-linux-arm64",
+    "changesets-linux-x64",
+    "changesets-win32-arm64",
+    "changesets-win32-x64",
+]
+
+[[package]]
+name = "changelog-app"
+version = "0.0.0"
+source = { virtual = "." }
+
+[[package]]
+name = "changesets"
+version = "0.3.0"
+source = { editable = "python/changelog" }
+dependencies = [
+    { name = "changesets-darwin-arm64", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "changesets-darwin-x64", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
+    { name = "changesets-linux-arm64", marker = "platform_machine == 'aarch64' and sys_platform == 'linux'" },
+    { name = "changesets-linux-x64", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "changesets-win32-arm64", marker = "platform_machine == 'ARM64' and sys_platform == 'win32'" },
+    { name = "changesets-win32-x64", marker = "platform_machine == 'AMD64' and sys_platform == 'win32'" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "changesets-darwin-arm64", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", editable = "python/darwin-arm64" },
+    { name = "changesets-darwin-x64", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'", editable = "python/darwin-x64" },
+    { name = "changesets-linux-arm64", marker = "platform_machine == 'aarch64' and sys_platform == 'linux'", editable = "python/linux-arm64" },
+    { name = "changesets-linux-x64", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'", editable = "python/linux-x64" },
+    { name = "changesets-win32-arm64", marker = "platform_machine == 'ARM64' and sys_platform == 'win32'", editable = "python/win32-arm64" },
+    { name = "changesets-win32-x64", marker = "platform_machine == 'AMD64' and sys_platform == 'win32'", editable = "python/win32-x64" },
+]
+
+[[package]]
+name = "changesets-darwin-arm64"
+version = "0.3.0"
+source = { editable = "python/darwin-arm64" }
+
+[[package]]
+name = "changesets-darwin-x64"
+version = "0.3.0"
+source = { editable = "python/darwin-x64" }
+
+[[package]]
+name = "changesets-linux-arm64"
+version = "0.3.0"
+source = { editable = "python/linux-arm64" }
+
+[[package]]
+name = "changesets-linux-x64"
+version = "0.3.0"
+source = { editable = "python/linux-x64" }
+
+[[package]]
+name = "changesets-win32-arm64"
+version = "0.3.0"
+source = { editable = "python/win32-arm64" }
+
+[[package]]
+name = "changesets-win32-x64"
+version = "0.3.0"
+source = { editable = "python/win32-x64" }

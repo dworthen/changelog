@@ -1,0 +1,26 @@
+[project]
+name = "changesets"
+version = "0.3.0"
+description = "Git-based changelog manager for JavaScript, Python, and Go projects."
+license = "MIT"
+readme = "README.md"
+authors = [{ name = "Derek Worthen", email = "worthend.derek@gmail.com" }]
+requires-python = ">=3.11"
+dependencies = [
+  "changesets-win32-x64==0.3.0; sys_platform == 'win32' and platform_machine == 'AMD64'",
+  "changesets-win32-arm64==0.3.0; sys_platform == 'win32' and platform_machine == 'ARM64'",
+  "changesets-linux-x64==0.3.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "changesets-linux-arm64==0.3.0; sys_platform == 'linux' and platform_machine == 'aarch64'",
+  "changesets-darwin-x64==0.3.0; sys_platform == 'darwin' and platform_machine == 'x86_64'",
+  "changesets-darwin-arm64==0.3.0; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[project.urls]
+Repository = "https://github.com/dworthen/changelog"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+changelog = 'changesets.__init__:run'

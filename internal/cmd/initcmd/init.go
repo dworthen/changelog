@@ -1,8 +1,11 @@
 package initcmd
 
 import (
+	"log/slog"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dworthen/changelog/internal/initialize"
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
@@ -10,11 +13,16 @@ import (
 var InitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize project to use changelog",
+	Long:  "Initialize project to use changelog",
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := tea.NewProgram(initialize.NewModel(), tea.WithAltScreen()).Run()
-		cobra.CheckErr(err)
+		slog.Debug("initcmd: init called", "args", args)
+		initModel, err := initialize.NewInitializeModel()
+		utils.CheckError(err)
+		_, err = tea.NewProgram(initModel, tea.WithAltScreen()).Run()
+		utils.CheckError(err)
 		err = versioninfo.PrintAvailableUpdate()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
+		slog.Debug("initcmd: init completed")
 	},
 }
 

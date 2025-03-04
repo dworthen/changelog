@@ -1,7 +1,12 @@
 package applycmd
 
 import (
+	"log/slog"
+
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dworthen/changelog/internal/apply"
+	"github.com/dworthen/changelog/internal/globals"
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
@@ -10,10 +15,17 @@ var ApplyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Description",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := apply.Apply()
-		cobra.CheckErr(err)
+		slog.Debug("addcmd: add called", "args", args)
+		applyModel, err := apply.NewApplyModel()
+		utils.CheckError(err)
+
+		globals.Program = tea.NewProgram(applyModel, tea.WithAltScreen(), tea.WithMouseCellMotion())
+		_, err = globals.Program.Run()
+		utils.CheckError(err)
+
 		err = versioninfo.PrintAvailableUpdate()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
+		slog.Debug("addcmd: add completed")
 	},
 }
 

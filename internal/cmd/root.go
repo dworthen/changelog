@@ -1,13 +1,18 @@
 package cmd
 
 import (
+	"log/slog"
 	"os"
+	"path/filepath"
 
+	"github.com/dworthen/changelog/internal/cliflags"
 	"github.com/dworthen/changelog/internal/cmd/addcmd"
 	"github.com/dworthen/changelog/internal/cmd/applycmd"
+	"github.com/dworthen/changelog/internal/cmd/checkcmd"
 	"github.com/dworthen/changelog/internal/cmd/initcmd"
 	"github.com/dworthen/changelog/internal/cmd/updatecmd"
 	"github.com/dworthen/changelog/internal/cmd/versioncmd"
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -16,31 +21,60 @@ var rootCmd = &cobra.Command{
 	Short: "Description",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-	// },
+	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+	utils.CheckError(err)
 }
 
 func init() {
+	cobra.OnInitialize(initialize)
+
+	rootCmd.PersistentFlags().StringVarP(&cliflags.CWD, "cwd", "", ".", "project directory for changelog.")
+	rootCmd.PersistentFlags().BoolVarP(&cliflags.Verbose, "verbose", "", false, "enable verbose logging.")
+
 	rootCmd.AddCommand(initcmd.InitCmd)
 	rootCmd.AddCommand(addcmd.AddCmd)
 	rootCmd.AddCommand(applycmd.ApplyCmd)
+	rootCmd.AddCommand(checkcmd.CheckCmd)
 	rootCmd.AddCommand(updatecmd.UpdateCmd)
 	rootCmd.AddCommand(versioncmd.VersionCmd)
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+}
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.goda.yaml)")
+func initialize() {
+	cwd := utils.GetCWD()
+	configDir := utils.GetChangelogDirPath()
+	configFilePath := utils.GetConfigFilePath()
+	logsFilePath := utils.GetLogsFilePath()
+	directory := filepath.Dir(logsFilePath)
+	_, err := os.Stat(directory)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(directory, 0755)
+			utils.CheckError(err)
+		} else {
+			utils.CheckError(err)
+		}
+	}
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	logFileWriter, err := os.OpenFile(logsFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	utils.CheckError(err)
+
+	opts := &slog.HandlerOptions{
+		AddSource: true,
+		Level:     slog.LevelInfo,
+	}
+
+	if cliflags.Verbose {
+		opts.Level = slog.LevelDebug
+	}
+
+	logger := slog.New(slog.NewJSONHandler(logFileWriter, opts))
+	slog.SetDefault(logger)
+
+	slog.Info("Starting changelog", "cwd", cwd, "configDir", configDir, "configFilePath", configFilePath, "logsFilePath", logsFilePath)
 }

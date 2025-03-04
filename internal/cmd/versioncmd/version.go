@@ -2,20 +2,25 @@ package versioncmd
 
 import (
 	"fmt"
+	"log/slog"
 
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
 
 var VersionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Description",
+	Short: "Print the current version of changelog",
+	Long:  "Print the current version of changelog",
 	Run: func(cmd *cobra.Command, args []string) {
+		slog.Debug("versioncmd: version called", "args", args)
 		version, err := versioninfo.GetVersion()
-		cobra.CheckErr(err)
-		fmt.Println(version)
+		utils.CheckError(err)
+		fmt.Printf("Changelog Version: %s\n", version)
 		err = versioninfo.PrintAvailableUpdate()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
+		slog.Debug("versioncmd: version completed")
 	},
 }
 

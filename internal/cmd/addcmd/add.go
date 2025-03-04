@@ -1,8 +1,11 @@
 package addcmd
 
 import (
+	"log/slog"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dworthen/changelog/internal/add"
+	"github.com/dworthen/changelog/internal/utils"
 	"github.com/dworthen/changelog/internal/versioninfo"
 	"github.com/spf13/cobra"
 )
@@ -11,10 +14,14 @@ var AddCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Description",
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := tea.NewProgram(add.NewModel(), tea.WithAltScreen()).Run()
-		cobra.CheckErr(err)
+		slog.Debug("addcmd: add called", "args", args)
+		addModel, err := add.NewAddModel()
+		utils.CheckError(err)
+		_, err = tea.NewProgram(addModel, tea.WithAltScreen()).Run()
+		utils.CheckError(err)
 		err = versioninfo.PrintAvailableUpdate()
-		cobra.CheckErr(err)
+		utils.CheckError(err)
+		slog.Debug("addcmd: add completed")
 	},
 }
 

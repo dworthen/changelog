@@ -1,125 +1,75 @@
 package add
 
 import (
-	"fmt"
-	"strings"
+	"log/slog"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/huh"
-	"github.com/dworthen/changelog/internal/common"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/dworthen/changelog/internal/models/common"
+	"github.com/dworthen/changelog/internal/models/pipelinemodel"
 )
 
-type ChangeFormState int
-
-const (
-	StateInitial ChangeFormState = iota
-	StateDescription
-	StateCompleted
-	StateError
-)
-
-type Model struct {
-	State             ChangeFormState
-	form              *huh.Form
-	ChangeType        string
-	ChangeDescription string
-	width             int
-	height            int
-	err               error
+type addModel struct {
+	model tea.Model
+	state addModelState
+	err   error
 }
 
-func NewModel() Model {
-	m := Model{
-		State:             StateInitial,
-		ChangeType:        "",
-		ChangeDescription: "",
+func NewAddModel() (*addModel, error) {
+	pipelineModel, err := pipelinemodel.NewPipelineModelBuilder().
+		WithModels(formModelConstructors).
+		WithStepCompletionMsg(pipelineStepCompleteMsg{}).
+		WithOnComplete(onAddCompleteCmd).
+		Build()
+
+	if err != nil {
+		return nil, err
 	}
 
-	m.form = huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Key("changeType").
-				Title("Change Type").
-				Options(huh.NewOptions[string]("Patch", "Minor", "Major")...),
-		),
-	)
-
-	return m
+	return &addModel{
+		model: pipelineModel,
+		state: addModelStateRunning,
+	}, nil
 }
 
-func (m Model) Init() tea.Cmd {
-	return tea.Batch(m.form.Init())
+func (m addModel) Init() tea.Cmd {
+	return m.model.Init()
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m addModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	slog.Debug("addModel.Update: received msg", "msg", spew.Sdump(msg))
 
 	switch msg := msg.(type) {
-	case common.CompletedMsg:
-		m.State = StateCompleted
+	case pipelineCompleteMsg:
+		slog.Info("addModel.Update: PipelineCompleteMsg received. Exiting")
 		return m, tea.Quit
 	case common.ErrorMsg:
-		m.State = StateError
+		slog.Error("addModel.Update: ErrorMsg received", "error", msg.Err)
+		m.state = addModelStateError
 		m.err = msg.Err
-	case tea.WindowSizeMsg:
-		m.width = msg.Width
-		m.height = msg.Height
-		m.form.WithWidth(msg.Width)
 		return m, nil
 	case tea.KeyMsg:
+		slog.Debug("addModel.Update: KeyMsg received")
 		switch msg.String() {
-		case "esc", "ctrl+c", "q":
+		case "ctrl+c":
+			slog.Info("addModel.Update: ctrl+c received. Quitting")
 			return m, tea.Quit
 		case "enter":
-			switch m.State {
-			case StateCompleted, StateError:
+			switch m.state {
+			case addModelStateError, addModelStateComplete:
+				slog.Info("addModel.Update: Enter key received at end of application. Quitting")
 				return m, tea.Quit
 			}
 		}
 	}
-
-	var cmds []tea.Cmd
-
-	form, cmd := m.form.Update(msg)
-	if f, ok := form.(*huh.Form); ok {
-		m.form = f
-		cmds = append(cmds, cmd)
-	}
-
-	if m.form.State == huh.StateCompleted {
-		switch m.State {
-		case StateDescription:
-			m.ChangeDescription = m.form.GetString("description")
-			cmds = append(cmds, saveFile(m.ChangeType, m.ChangeDescription))
-			// cmds = append(cmds, tea.Quit)
-		case StateInitial:
-			m.ChangeType = m.form.GetString("changeType")
-			m.State = StateDescription
-			m.form = huh.NewForm(
-				huh.NewGroup(
-					huh.NewText().
-						Key("description").
-						Title("Change Description").Validate(func(value string) error {
-						if strings.TrimSpace(value) == "" {
-							return fmt.Errorf("Required.")
-						}
-						return nil
-					}),
-				),
-			)
-			cmds = append(cmds, m.form.Init())
-		}
-	}
-
-	return m, tea.Batch(cmds...)
+	newModel, cmd := m.model.Update(msg)
+	m.model = newModel
+	return m, cmd
 }
 
-func (m Model) View() string {
-	switch m.State {
-	case StateError:
-		return m.err.Error()
-	case StateCompleted:
-		return fmt.Sprintf("%s %s", m.ChangeType, m.ChangeDescription)
-	default:
-		return m.form.View()
+func (m addModel) View() string {
+	if m.state == addModelStateError {
+		return "Error: " + m.err.Error()
 	}
+	return m.model.View()
 }

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"os"
 
 	"github.com/dworthen/updater"
 )
@@ -60,7 +59,7 @@ func PrintAvailableUpdate() error {
 	}
 
 	if isUpdate {
-		fmt.Fprintf(os.Stderr, "A new version is available, %s. Run the update command to upgrade to the latest version.\n", newVersion)
+		fmt.Printf("A new version of changelog is available, %s. Run the `changelog update` to upgrade to the latest version.\n", newVersion)
 	}
 
 	return nil

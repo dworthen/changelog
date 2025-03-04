@@ -1,43 +1,46 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
+	"log/slog"
 	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
 	"sync"
+
+	"github.com/dworthen/changelog/internal/utils"
+	"gopkg.in/yaml.v3"
 )
 
-type BumpInfo struct {
-	FileName string `json:"file"`
-	JsonPath string `json:"path"`
+type VersionFile struct {
+	Path    string `yaml:"path"`
+	Pattern string `yaml:"pattern"`
 }
 
 type OnAdd struct {
-	ComitFiles bool `json:"commitFiles"`
+	CommitFiles bool `yaml:"commitFiles"`
 }
 
 type OnApply struct {
-	CommitFiles bool   `json:"commitFiles"`
-	TagCommit   bool   `json:"tagCommit"`
-	TagFormat   string `json:"tagFormat"`
+	CommitFiles bool     `yaml:"commitFiles"`
+	TagCommit   bool     `yaml:"tagCommit"`
+	TagFormat   string   `yaml:"tagFormat"`
+	Commands    []string `yaml:"commands"`
 }
 
 type Config struct {
-	Version   string     `json:"version"`
-	BumpFiles []BumpInfo `json:"bumpFiles"`
-	OnAdd     OnAdd      `json:"onAdd"`
-	OnApply   OnApply    `json:"onApply"`
+	m             sync.RWMutex  `yaml:"-"`
+	Version       string        `yaml:"version"`
+	ChangelogFile string        `yaml:"changelogFile"`
+	Files         []VersionFile `yaml:"files"`
+	OnAdd         OnAdd         `yaml:"onAdd"`
+	OnApply       OnApply       `yaml:"onApply"`
 }
 
-func newConfig() *Config {
+func NewConfig() *Config {
 	return &Config{
-		Version:   "",
-		BumpFiles: []BumpInfo{},
+		Version:       "0.0.0",
+		ChangelogFile: "CHANGELOG.md",
+		Files:         []VersionFile{},
 		OnAdd: OnAdd{
-			ComitFiles: true,
+			CommitFiles: true,
 		},
 		OnApply: OnApply{
 			CommitFiles: true,
@@ -48,134 +51,147 @@ func newConfig() *Config {
 }
 
 func (c *Config) Save() error {
-	dir, err := filepath.Abs(".changelog")
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	configPath := utils.GetConfigFilePath()
+
+	fileContents, err := yaml.Marshal(c)
 	if err != nil {
 		return err
 	}
 
-	stats, err := os.Stat(dir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return fmt.Errorf(".changelog directory does not exist. Run changelog init.")
-		} else {
-			return err
-		}
-	}
-	if !stats.IsDir() {
-		return fmt.Errorf(".changelog is not a directory")
-	}
+	return os.WriteFile(configPath, fileContents, 0644)
+}
 
-	filename := filepath.Join(dir, "config.json")
+func (c *Config) SetVersion(version string) {
+	c.m.Lock()
+	defer c.m.Unlock()
 
-	configContents, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return err
-	}
+	c.Version = version
+}
 
-	return os.WriteFile(filename, configContents, 0644)
+func (c *Config) GetVersion() string {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.Version
+}
+
+func (c *Config) SetChangelogFile(changelogFile string) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.ChangelogFile = changelogFile
+}
+
+func (c *Config) GetChangelogFile() string {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.ChangelogFile
+}
+
+func (c *Config) AddVersionFile(path string, pattern string) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.Files = append(c.Files, VersionFile{
+		Path:    path,
+		Pattern: pattern,
+	})
+}
+
+func (c *Config) GetVersionFiles() []VersionFile {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.Files
+}
+
+func (c *Config) SetOnAddCommitFiles(commitFiles bool) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.OnAdd.CommitFiles = commitFiles
+}
+
+func (c *Config) GetOnAddCommitFiles() bool {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.OnAdd.CommitFiles
+}
+
+func (c *Config) SetOnApplyCommands(commands []string) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.OnApply.Commands = commands
+}
+
+func (c *Config) GetOnApplyCommands() []string {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.OnApply.Commands
+}
+
+func (c *Config) SetOnApplyCommitFiles(commitFiles bool) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.OnApply.CommitFiles = commitFiles
+}
+
+func (c *Config) GetOnApplyCommitFiles() bool {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.OnApply.CommitFiles
+}
+
+func (c *Config) SetOnApplyTagCommit(tagCommit bool) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.OnApply.TagCommit = tagCommit
+}
+
+func (c *Config) GetOnApplyTagCommit() bool {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.OnApply.TagCommit
+}
+
+func (c *Config) SetOnApplyTagFormat(tagFormat string) {
+	c.m.Lock()
+	defer c.m.Unlock()
+	c.OnApply.TagFormat = tagFormat
+}
+
+func (c *Config) GetOnApplyTagFormat() string {
+	c.m.RLock()
+	defer c.m.RUnlock()
+	return c.OnApply.TagFormat
 }
 
 var conf *Config
-var once sync.Once
+var configOnce sync.Once
+var configLoadingErr error
 
-func GetConfig() (*Config, error) {
-	var errMsg string = ""
-	once.Do(func() {
-		conf = newConfig()
-		fileLocation, err := filepath.Abs(".changelog/config.json")
-		if err != nil {
-			errMsg = err.Error()
-			return
-		}
-
-		_, err = os.Stat(fileLocation)
+func LoadConfig() (*Config, error) {
+	configOnce.Do(func() {
+		conf = NewConfig()
+		configPath := utils.GetConfigFilePath()
+		_, err := os.Stat(configPath)
 		if err != nil {
 			return
 		}
 
-		fileContents, err := os.ReadFile(fileLocation)
+		fileContents, err := os.ReadFile(configPath)
 		if err != nil {
-			errMsg = err.Error()
+			configLoadingErr = err
 			return
 		}
 
-		err = json.Unmarshal(fileContents, &conf)
+		err = yaml.Unmarshal(fileContents, conf)
 		if err != nil {
-			errMsg = err.Error()
+			configLoadingErr = err
 			return
 		}
+		slog.Info("Loaded config", "config", conf)
 	})
-
-	if errMsg != "" {
-		return nil, fmt.Errorf("Failed to load config. %s", errMsg)
+	if configLoadingErr != nil {
+		return nil, configLoadingErr
 	}
-
 	return conf, nil
-}
-
-func (bumpInfo *BumpInfo) Bump(newVersion string) error {
-	filePath, err := filepath.Abs(bumpInfo.FileName)
-	if err != nil {
-		return err
-	}
-
-	_, err = os.Stat(filePath)
-	if err != nil {
-		return err
-	}
-
-	fileContents, err := os.ReadFile(filePath)
-	if err != nil {
-		return err
-	}
-
-	data := map[string]interface{}{}
-	err = json.Unmarshal(fileContents, &data)
-	if err != nil {
-		return err
-	}
-	var currentInterface interface{} = data
-	pathWalk := strings.Split(bumpInfo.JsonPath, ".")
-
-	for i := 0; i < len(pathWalk)-1; i++ {
-		key := pathWalk[i]
-		switch typedInterface := currentInterface.(type) {
-		case map[string]interface{}:
-			currentInterface = typedInterface[key]
-		case []interface{}:
-			intKey, err := strconv.Atoi(key)
-			if err != nil {
-				return err
-			}
-			if intKey < 0 || intKey >= len(typedInterface) {
-				return fmt.Errorf("Unable to parse json path %s for %s. Array index falls outside of array", bumpInfo.JsonPath, bumpInfo.FileName)
-			}
-			currentInterface = typedInterface[intKey]
-		default:
-			return fmt.Errorf("Unable to parse json path %s for %s", bumpInfo.JsonPath, bumpInfo.FileName)
-		}
-	}
-
-	key := pathWalk[len(pathWalk)-1]
-	switch currentInterface := currentInterface.(type) {
-	case map[string]interface{}:
-		currentInterface[key] = newVersion
-	case []interface{}:
-		intKey, err := strconv.Atoi(key)
-		if err != nil {
-			return err
-		}
-		if intKey < 0 || intKey >= len(currentInterface) {
-			return fmt.Errorf("Unable to parse json path %s for %s. Array index falls outside of array", bumpInfo.JsonPath, bumpInfo.FileName)
-		}
-		currentInterface[intKey] = newVersion
-	default:
-		return fmt.Errorf("Unable to parse json path %s for %s", bumpInfo.JsonPath, bumpInfo.FileName)
-	}
-
-	newFileContents, err := json.MarshalIndent(&data, "", "  ")
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(filePath, newFileContents, 0644)
 }

@@ -29,7 +29,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.56
+          version: v1.64.6
 
       - name: Build
         run: go tool task build

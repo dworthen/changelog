@@ -328,7 +328,10 @@ func (c *changelog) apply(writer *iowriters.StdioWriter) error {
 	}
 	for _, command := range c.Commands {
 		cmdToRun := theme.Focused.Title.Render(fmt.Sprintf("%s\n", command))
-		writer.Write([]byte(cmdToRun))
+		_, err := writer.Write([]byte(cmdToRun))
+		if err != nil {
+			return fmt.Errorf("Error writing command to output. Error: %w", err)
+		}
 		commandList := strings.Split(command, " ")
 		cmd := exec.Command(commandList[0], commandList[1:]...)
 		cmd.Dir = cwd
@@ -337,7 +340,10 @@ func (c *changelog) apply(writer *iowriters.StdioWriter) error {
 		err = cmd.Run()
 		if err != nil {
 			errMSg := theme.Focused.ErrorIndicator.Render(err.Error() + "\n")
-			writer.Write([]byte(errMSg))
+			_, err := writer.Write([]byte(errMSg))
+			if err != nil {
+				return fmt.Errorf("Error writing command error to output. Error: %w", err)
+			}
 			break
 		}
 	}

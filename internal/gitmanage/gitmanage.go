@@ -183,13 +183,16 @@ func getMainBranchCommit() (*object.Commit, error) {
 	}
 
 	var mainReference *plumbing.Reference
-	branches.ForEach(func(branch *plumbing.Reference) error {
+	err = branches.ForEach(func(branch *plumbing.Reference) error {
 		switch branch.Name() {
 		case plumbing.Main, plumbing.Master:
 			mainReference = branch
 		}
 		return nil
 	})
+	if err != nil {
+		return nil, fmt.Errorf("Error getting main branch commit. Failed to iterate branches: %w", err)
+	}
 
 	if mainReference == nil {
 		head, err := repo.Head()

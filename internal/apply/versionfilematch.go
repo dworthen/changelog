@@ -41,7 +41,7 @@ func newVersionFileMatches(vf config.VersionFile, cwd string) ([]versionFileMatc
 
 	fileContents := string(fileBytes)
 	matches := versionPattern.FindAllStringSubmatchIndex(fileContents, -1)
-	if matches == nil || len(matches) == 0 {
+	if len(matches) == 0 {
 		return nil, fmt.Errorf("Version pattern, %s, not found in file, %s", vf.Pattern, vf.Path)
 	}
 

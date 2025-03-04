@@ -41,7 +41,7 @@ func GetCWD() string {
 	}
 	cwd, err := os.Getwd()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, "Unable to get current working directory. Error: %v", err)
 		os.Exit(1)
 	}
 	return ToFullPath(cwd)

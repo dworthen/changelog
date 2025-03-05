@@ -1,6 +1,6 @@
 {
   "name": "@d-dev/changelog",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "author": "Derek Worthen <worthend.derek@gmail.com>",
   "license": "MIT",
@@ -31,11 +31,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "optionalDependencies": {
-    "@d-dev/changelog-win32-arm64": "0.4.0",
-    "@d-dev/changelog-win32-x64": "0.4.0",
-    "@d-dev/changelog-darwin-arm64": "0.4.0",
-    "@d-dev/changelog-darwin-x64": "0.4.0",
-    "@d-dev/changelog-linux-arm64": "0.4.0",
-    "@d-dev/changelog-linux-x64": "0.4.0"
+    "@d-dev/changelog-win32-arm64": "0.4.1",
+    "@d-dev/changelog-win32-x64": "0.4.1",
+    "@d-dev/changelog-darwin-arm64": "0.4.1",
+    "@d-dev/changelog-darwin-x64": "0.4.1",
+    "@d-dev/changelog-linux-arm64": "0.4.1",
+    "@d-dev/changelog-linux-x64": "0.4.1"
   }
 }

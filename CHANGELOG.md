@@ -1,3 +1,11 @@
+## 0.4.1
+
+### Patch Changes
+
+- e035f52: Fix error handling in js/python wrappers.
+- e035f52: Cleanup error reporting.
+- f9c16a6: Update docs.
+
 ## 0.4.0
 
 ### Minor Changes

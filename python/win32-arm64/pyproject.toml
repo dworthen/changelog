@@ -1,6 +1,6 @@
 [project]
 name = "changesets-win32-arm64"
-version = "0.4.0"
+version = "0.4.1"
 description = "Git-based changelog manager for JavaScript, Python, and Go projects."
 license = "MIT"
 readme = "README.md"

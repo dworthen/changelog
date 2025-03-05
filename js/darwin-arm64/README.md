@@ -1,27 +1,168 @@
 # Changelog
 
-Simple changelog management for projects using [semantic versioning](https://semver.org/) and git.
+Git-based changelog manager for JavaScript, Python, and Go projects using [semantic versioning](https://semver.org/) and git.
 
-## Example
+## Usage
 
-### Add
+```shell
+$ changelog help
 
-Add a changelog entry describing a set of changes.
+Git-based changelog manager for JavaScript, Python, and Go projects.
 
-```bash
+Usage:
+  changelog [command]
+
+Available Commands:
+  add         Add a changelog entry.
+  apply       Apply changelog entries.
+  check       Check that the current branch or last commit contains a changelog entry. Useful for CI workflows to enforce the presence of changelog entries.
+  help        Help about any command
+  init        Initialize project to use changelog.
+  update      Update to the latest version of changelog
+  version     Print the current version of changelog
+
+Flags:
+      --cwd string   project directory for changelog. (default ".")
+  -h, --help         help for changelog
+      --verbose      enable verbose logging.
+
+Use "changelog [command] --help" for more information about a command.
+```
+
+## Init
+
+```shell
+changelog init
+```
+
+Walks through creating a `.changelog` directory with the following files.
+
+### `config.yaml`
+
+Changelog configuration:
+
+```yaml
+# Example config.yaml
+
+# Current version of the project.
+# This gets bumped, along with the files listed below,
+# when running `changelog apply`
+version: 0.1.0
+changelogFile: CHANGELOG.md # Changelog file to manage
+
+# A list of files containing versions to bump when running
+# `changelog apply`.
+# Uses RegExp patterns for matching and replacing the actual version.
+# The RegExp must contain 1 capture group with the version portion to replace.
+# View https://pkg.go.dev/regexp/syntax@go1.24.1 for RegExp syntax
+# Use https://regex101.com/ with GoLang selected to test patterns.
+# Examples for Node package.json and python pyproject.toml below.
+files:
+    - path: package.json
+      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
+    - path: pyproject.toml
+      pattern: 'version\s*=\s*"(\d+\.\d+\.\d+)"'
+
+# Configures `changelog add` command
+onAdd:
+    # commit staged files + added changelog entry
+    # Uses the provided description as the commit message.
+    commitFiles: true
+
+# Configure `changelog apply` command
+onApply:
+    commitFiles: true
+    tagCommit: true
+    tagFormat: v{{version}}
+    # A list of commands to run after bumping version files
+    # and before committing and tagging.
+    # Often useful to run install/sync commands that may update
+    # lock files.
+    commands:
+        - npm install
+        - uv sync
+
+```
+
+### `changelogTemplate.hbs`
+
+A [Handlebars](https://handlebarsjs.com/) template used for adding new entries to the changelog file specified in the `.changelog/config.yaml` file.
+
+Default template:
+
+```
+## {{version}}
+{{#if majorChanges}}
+
+### Major Changes
+
+{{#each majorChanges}}
+- {{shortSha}}: {{description}}
+{{/each}}
+{{/if}}
+{{#if minorChanges}}
+
+### Minor Changes
+
+{{#each minorChanges}}
+- {{shortSha}}: {{description}}
+{{/each}}
+{{/if}}
+{{#if patchChanges}}
+
+### Patch Changes
+
+{{#each patchChanges}}
+- {{shortSha}}: {{description}}
+{{/each}}
+{{/if}}
+
+
+```
+
+**Available Variables**
+
+- version: The new version of the project.
+- oldVersion: The previous version of the project.
+- majorChanges, minorChanges, patchChanges: A list of change descriptions.
+  - **Change Description:**
+    - Sha: The git Sha associated with the change commit.
+    - shortSha: The git short Sha associated with the change commit.
+    - change: `patch|minor|major`
+    - description: The description of the change
+
+## Add
+
+```shell
 changelog add
 ```
 
 ![changelog add](docs/images/changelog-add.gif)
 
-This creates a timestamped file in the `.changelog` directory ready to be added to source control and applied at a later time. Depending on how changelog is configured, the `add` command also adds the timestamped file to the git staging area and then commit all staged files using the provided description as the commit message.
+Creates a timestamped `.md` changelog entry file in the `.changelog` directory ready to be added to source control and applied at a later time. The changelog entry contains the type of change (`patch|minor|major`) along with the provided description.
+
+Example changelog entry:
+
+```
+---
+change: "major"
+---
+A major change.
+```
+
+Depending on how changelog is configured, the `add` command also adds the timestamped file to the git staging area and then commit all staged files using the provided description as the commit message.
 
 > [!NOTE]
 > As a best practice, commit the timestamp file with the set of files the changelog entry describes. For example, run `git add <FILES...>` prior to running `changelog add`.
 
-### Apply
+## Apply
 
-The apply command gathers previously created change descriptions from the `.changelog` directory and prepends the descriptions to the `CHANGELOG.md` file. The command also bumps semantic version numbers in specified files.
+The apply command...
+
+- Runs in dry mode by default. The command shows a preview of the changes and ask for confirmation prior to applying any changes.
+- gathers previously created changelog entries from the `.changelog` directory and prepends the info to the `CHANGELOG.md` file according to the `.changelog/changelogTemplate.hbs` template file.
+- Bumps semantic version numbers in specified files according to `.changelog/config.yaml`.
+- run any commands listed in `.changelog/config.yaml`.
 
 ```bash
 changelog apply
@@ -29,41 +170,62 @@ changelog apply
 
 ![changelog apply](docs/images/changelog-apply.gif)
 
-The resulting `CHANGELOG.md` file.
-
-```md
-## 0.2.0
-
-### Minor Changes
-
-- a07c8dd: Describe a minor change.
-```
-
-Running `git tag` shows that a new tag, `v0.2.0` has been applied.
-
-## Features
-
-- Store and track changelog descriptions per commit
-- Apply changelog entries to `CHANGELOG.md`
-- Sync version fields in specified JSON files such as the version field in a package.json file.
+If `.changelog/config.yaml` is configured to commit and tag files when running `changelog apply` then `git log` and `git tag` should show the commit and associated tag.
 
 ## TODO
 
 - Add support for prereleases
-- Add support for monorepos
-- Add support for other version file formats (yaml, toml, etc.)
 
 ## Install
 
 ### NPM
 
-```
+https://www.npmjs.com/package/@d-dev/changelog
+
+```shell
+npm install @d-dev/changelog
+# or globally
 npm install @d-dev/changelog -g
+```
+
+### Python
+
+https://pypi.org/project/changesets/
+
+```shell
+pip install changesets
+# Or with UV
+uv add changesets --dev
+# package is called changesets but command is still changelog
+```
+
+### Golang
+
+https://pkg.go.dev/github.com/dworthen/changelog
+
+With go version `1.24.x` you can add the package as a tool to your project with
+
+```shell
+go get -tool github.com/dworthen/changelog@latest
+```
+
+and use with
+
+```shell
+go tool changelog help
+```
+
+Prior to 1.24
+
+```
+go install github.com/dworthen/changelog
 ```
 
 ### Binaries
 
 #### Windows
+
+Requires the newer [powershell core](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.5).
 
 ```powershell
 curl -sSfL https://raw.githubusercontent.com/dworthen/changelog/main/scripts/install.ps1 | pwsh -Command -
@@ -85,7 +247,7 @@ rm install.ps1
 curl -sSfL https://raw.githubusercontent.com/dworthen/changelog/main/scripts/install.sh | bash
 ```
 
-This will install `changelog` to `~/bin`, be sure to export the location in the user `$PATH or use the `-to` flag to specify a download location.
+This will install `changelog` to `~/bin`, be sure to export the location in the user `$PATH` or use the `-to` flag to specify a download location.
 
 Running the installer with additional flags:
 
@@ -93,124 +255,15 @@ Running the installer with additional flags:
 curl -sSfL https://raw.githubusercontent.com/dworthen/changelog/main/scripts/install.sh | bash -s -- --force --tag v0.0.1 --to ~/bin
 ```
 
+### Prebuilt Binaries
+
+https://github.com/dworthen/changelog/releases
+
 ### From Source with [Go](https://go.dev/)
 
 ```bash
-go install github.com/dworthen/changelog@latest
-```
-
-## Getting Started
-
-Within a project directory, run `changelog init`.
-
-### 1. Current Version
-
-![changelog version](docs/images/changelog-version.png)
-
-Specifies the current version of the project. This version is tracked by `changelog` and considered the source of truth for project version. The version is bumped accordingly when `changelog` applies updates. The bumped version is then used to update specified version files. More on version files below.
-
-### 2. Commit changelog entries
-
-![changelog commit entries](docs/images/changelog-commit-entries.png)
-
-If yes, `changelog add` creates a changelog entry, adds the file to the git staging area and then commits all staged files using the changelog description as the commit message. If using this option, be sure to run `git add <FILES...>` prior to running `changelog add` to associate the new changelog entry with the files it describes.
-
-If no, then `changelog add` creates a changelog entry but does not commit the files or run any git commands.
-
-### 3. Commit changelog apply
-
-![changelog commit apply](docs/images/changelog-commit-apply.png)
-
-`changelog apply` updates `CHANGELOG.md` and associated version files. If yes, then `changelog apply` will commit the changed files using the commit description `chore: apply changelog`.
-
-### 4. Tag commit (not presented if previous answer == No)
-
-![changelog tag](docs/images/changelog-tag.png)
-
-If yes, `changelog apply` tags the commit created. This option is ignored if the answer to the previous question is No.
-
-### 5. Tag format (not presented if either of the previous two answers == No)
-
-![changelog tag format](docs/images/changelog-tag-format.png)
-
-Specify the tag to apply. This string is evaluated using handlebars and has access to the new version. Defaults to `v{{version}}`. This option is ignored if either of the previous two answers is No.
-
-### 6. Version files
-
-![changelog version files](docs/images/changelog-version-files.png)
-
-Specify JSON files containing fields that should match the project version. The JSON path can point to a nested field using dot notation. After `changelog apply` bumps the current package version it updates all the specified JSON files and fields.
-
-> [!WARNING]
-> Currently, only JSON files are supported.
-
-### Config
-
-`changelog init` creates a `.changelog` directory and the following two files.
-
-**config.json**
-
-Describes the config the `init` command walks through.
-
-```json
-{
-  "version": "1.0.0",
-  "bumpFiles": [
-    {
-      "file": "package.json",
-      "path": "version"
-    },
-    {
-      "file": "some-json-file.json",
-      "path": "path.to.nested"
-    }
-  ],
-  "onAdd": {
-    "commitFiles": true
-  },
-  "onApply": {
-    "commitFiles": true,
-    "tagCommit": true,
-    "tagFormat": "v{{version}}"
-  }
-}
-```
-
-**changelogTemplate.hbs**
-
-A handlebars file describing the template to use when adding entries to `CHANGELOG.md`. Users have full control of how the changelog entries are formatted. The following handlebars variables are available.
-
-- **version**: The new project version after `changelog apply` finishes.
-- **oldVersion**: The previous project version prior to `changelog apply`.
-- **patchChanges|minorChanges|majorChanges**: A list of changes grouped by the level of change (patch, minor, or major). The variable is available if there is a change of that type present in the current update, otherwise its null.
-  - **sha**: The full git commit hash for the change.
-  - **shortSha**: The short git commit hash for the change.
-  - **description**: Changelog description.
-
-```md
-## {{version}}
-{{#if majorChanges}}
-
-### Major Changes
-
-{{#each majorChanges}}
-- {{shortSha}}: {{description}}
-{{~/each}}
-{{/if}}
-{{#if minorChanges}}
-
-### Minor Changes
-
-{{#each minorChanges}}
-- {{shortSha}}: {{description}}
-{{~/each}}
-{{/if}}
-{{#if patchChanges}}
-
-### Patch Changes
-
-{{#each patchChanges}}
-- {{shortSha}}: {{description}}
-{{/each}}
-{{~/if}}
+git clone https://github.com/dworthen/changelog.git
+cd changelog
+go mod tidy
+go build ./main.go
 ```

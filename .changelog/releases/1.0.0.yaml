@@ -1,0 +1,10 @@
+timestamp: 1772225281446
+version: 1.0.0
+changeTypes:
+  - Change
+changes:
+  - type: Change
+    timestamp: 1772222917183
+    sha: f123d0e1c737c2f48615fb694d76de7474d62893
+    shortSha: f123d0e
+    description: Migrate project to Bun.

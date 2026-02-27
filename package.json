@@ -1,13 +1,38 @@
 {
   "name": "changelog",
+  "version": "0.4.1",
+  "description": "A CLI tool for managing changelogs in your project",
+  "module": "src/index.ts",
+  "type": "module",
   "private": true,
-  "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "changelog": "./src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
+  "scripts": {
+    "fix": "biome check --write",
+    "check": "biome check",
+    "check:changelog": "bun run src/index.ts check",
+    "changelog:add": "bun run src/index.ts add",
+    "changelog:apply": "bun run src/index.ts apply",
+    "build": "bun run scripts/build.ts",
+    "pack": "bin-upload pack",
+    "publish": "bin-upload publish",
+    "docs": "docsify serve docs -p 3000"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.4",
+    "@d-dev/bin-upload": "latest",
+    "@types/bun": "latest",
+    "docsify-cli": "^4.4.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@d-dev/roar": "../roar/roar/d-dev-roar-0.0.2.tgz",
+    "@inquirer/prompts": "^8.3.0",
+    "eta": "^4.5.1",
+    "meow": "^14.1.0",
+    "yaml": "^2.8.2"
+  }
 }

@@ -1,8 +1,6 @@
-# changelog
+# Quick Start
 
 Changelog is a CLI tool for managing changelogs. Individual changelog entries are stored as files, eliminating merge conflicts and enabling CI enforcement.
-
-[Full documentation](https://dworthen.github.io/changelog)
 
 ## Installation
 
@@ -165,4 +163,10 @@ After applying, push the commit and tag:
 git push origin main --follow-tags
 ```
 
-[Full documentation](https://dworthen.github.io/changelog)
+## Next Steps
+
+- [How it Works](/how-it-works) — Understand the philosophy and mechanics behind changelog.
+- [Git Flow](/git-flow) — Recommended workflow for teams using branches and pull requests.
+- [Configuration](/configuration) — Customize version files, templates, and post-apply commands.
+- [Managing JS Projects](/tutorials/js) — Step-by-step tutorial for Node.js projects.
+- [Managing Python Projects](/tutorials/python) — Step-by-step tutorial for Python projects with uv.

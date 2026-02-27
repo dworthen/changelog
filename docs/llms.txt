@@ -1,0 +1,185 @@
+# Changelog
+
+> A CLI tool for managing changelogs. Individual changelog entries are stored as files, eliminating merge conflicts and enabling CI enforcement.
+
+`changelog` (published as `@d-dev/changelog` on npm and `changesets` on PyPI) takes a file-per-entry approach to changelog management. Developers run `changelog add` to create individual YAML entry files in `.changelog/next/`. When it's time to release, `changelog apply` collects all pending entries, computes a semver version bump, generates the changelog, and optionally commits and tags.
+
+## Installation
+
+npm:
+```bash
+npm install -g @d-dev/changelog
+```
+
+PyPI:
+```bash
+pip install changesets
+```
+
+Or download binaries from GitHub Releases: https://github.com/dworthen/changelog/releases
+
+Available platforms: Linux (x64, arm64), Linux musl (x64, arm64), macOS (x64, arm64), Windows (x64).
+
+## Commands
+
+### `changelog init`
+
+Interactive setup wizard. Creates `.changelog/` directory with `config.yaml`, `next/`, `releases/`, and `templates/`. Prompts for: current version (semver), changelog file path (default `CHANGELOG.md`), main git branch (default `main`), post-apply commands (repeated prompt, blank to finish).
+
+### `changelog add`
+
+Interactively add a changelog entry. Prompts for change type (Add, Change, Deprecate, Remove, Fix, Internal) and description. Writes a timestamped YAML file to `.changelog/next/`. Regenerates the changelog with an "Unreleased" section.
+
+### `changelog apply`
+
+Apply pending entries and bump version. Computes semver bump from change types (Change/Remove → major, Add/Deprecate → minor, Fix → patch, Internal → none). Moves entries from `next/` to a versioned release in `releases/`. Updates version in configured `versionFiles`. Runs `postCommands`. Optionally commits and tags.
+
+### `changelog view [argument]`
+
+View changelog output. No argument: full changelog preview including unreleased. `latest`: latest release only. `next`: unreleased entries only. `<version>`: specific version.
+
+### `changelog check`
+
+CI/CD gate. Uses `git merge-base` against the configured main branch to verify the current branch added at least one file to `.changelog/next/`. Exits with code 1 on failure. Requires full git history (`fetch-depth: 0` in CI).
+
+### `changelog version`
+
+Prints `currentVersion` from `.changelog/config.yaml`.
+
+## Configuration
+
+Configuration file: `.changelog/config.yaml`
+
+```yaml
+currentVersion: 1.0.0
+changelogFile: CHANGELOG.md
+git:
+  mainBranch: main
+versionFiles:
+  - path: package.json
+    pattern: ':\s*"(\d+\.\d+\.\d+)"'
+  - path: pyproject.toml
+    pattern: 'version\s*=\s*"(\d+\.\d+\.\d+)"'
+apply:
+  postCommands:
+    - npm install
+```
+
+### Properties
+
+- `currentVersion` (string, required) — Current semver version.
+- `changelogFile` (string, required, default: `CHANGELOG.md`) — Path to generated changelog.
+- `git.mainBranch` (string, required, default: `main`) — Main branch name, used by `check` command.
+- `versionFiles` (array, optional) — Files to update with new version on apply. Each item has `path` (file path) and `pattern` (regex with capture group matching the version string).
+- `apply.postCommands` (string[], optional) — Shell commands to run after apply (e.g., `npm install`, `uv lock`).
+
+### Templates
+
+Located in `.changelog/templates/`:
+
+- `header.md` — Static Markdown prepended to changelog.
+- `body.eta` — Eta template rendered per release. Variables: `version`, `date`, `changeTypes`, `changes` (grouped by type, each with `shortSha` and `description`).
+- `footer.md` — Static Markdown appended to changelog. Useful for historical content when migrating.
+
+## Change Types
+
+| Type | Description | Version Bump |
+|------|-------------|-------------|
+| Change | Change an existing feature | Major |
+| Remove | Remove a feature | Major |
+| Add | Add a new feature | Minor |
+| Deprecate | Deprecate a feature | Minor |
+| Fix | Fix a bug | Patch |
+| Internal | Internal change (not in public changelog) | None |
+
+`Internal` entries satisfy `changelog check` but are filtered out of public releases and do not trigger a version bump.
+
+## How it Works
+
+Each changelog entry is a separate YAML file in `.changelog/next/` containing `timestamp`, `type`, and `description`. This eliminates merge conflicts since each branch creates its own file.
+
+`changelog apply` collects entries, computes the semver bump, writes a release YAML to `.changelog/releases/<version>.yaml`, cleans `next/`, updates version strings in configured files, regenerates the full changelog from all releases, runs post-commands, and optionally commits + tags.
+
+The changelog is generated on the fly from `.changelog/releases/` data — header + body (per release) + footer. The YAML release files are the source of truth, not the changelog file itself.
+
+### Directory Structure
+
+```
+.changelog/
+├── config.yaml          # Project configuration
+├── next/                # Pending changelog entries
+├── releases/            # Versioned release data (one YAML per release)
+└── templates/           # Changelog rendering templates
+    ├── header.md
+    ├── body.eta
+    └── footer.md
+```
+
+## Git Flow
+
+Recommended workflow:
+
+1. Create a feature branch from main.
+2. Make changes, run `changelog add` to create entries alongside code.
+3. Open a PR — CI runs `changelog check` to enforce entries exist.
+4. Merge the PR. Entries accumulate in `.changelog/next/`.
+5. On main, run `changelog apply` to cut a release (bumps version, generates changelog, commits, tags).
+6. `git push origin main --follow-tags`.
+
+### CI Example (GitHub Actions)
+
+```yaml
+name: PR
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npx changelog check
+```
+
+`fetch-depth: 0` is required so `git merge-base` can find the fork point.
+
+## Migrating
+
+To adopt changelog in an existing project:
+
+1. Run `changelog init`, set `currentVersion` to the project's current version.
+2. Copy existing changelog content to `.changelog/templates/footer.md` to preserve history.
+3. Run `changelog view > CHANGELOG.md` to regenerate.
+4. Commit the `.changelog/` directory.
+
+New releases will appear above the historical footer content.
+
+## Tutorials
+
+### Node.js Projects
+
+Install as dev dependency (`npm install -D @d-dev/changelog`), run `npx changelog init`, add package.json scripts (`changelog:add`, `changelog:apply`, `changelog:check`, `changelog:version`, `changelog:view`). Use `npm install` as a post-apply command. CI uses `npx changelog check`.
+
+### Python Projects
+
+Install via `uv tool install changesets` or `pip install changesets`. Use `changesets` as the command name. Add poethepoet tasks in `pyproject.toml` for convenient access. Use `uv lock` as a post-apply command. CI uses `uvx changesets check` (no local install needed).
+
+## Links
+
+- [Quick Start](https://dworthen.github.io/changelog/)
+- [How it Works](https://dworthen.github.io/changelog/how-it-works.md)
+- [Configuration](https://dworthen.github.io/changelog/configuration.md)
+- [Commands](https://dworthen.github.io/changelog/commands.md)
+- [Git Flow](https://dworthen.github.io/changelog/git-flow.md)
+- [Migrating](https://dworthen.github.io/changelog/migrating.md)
+- [Managing JS Projects](https://dworthen.github.io/changelog/tutorials/js.md)
+- [Managing Python Projects](https://dworthen.github.io/changelog/tutorials/python.md)
+- [GitHub Repository](https://github.com/dworthen/changelog)

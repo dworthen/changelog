@@ -1,0 +1,76 @@
+binaries:
+  linux-arm64: "./bin/linux-arm64/changelog"
+  linux-arm64-musl: "./bin/linux-arm64-musl/changelog"
+  linux-x64: "./bin/linux-x64/changelog"
+  linux-x64-musl: "./bin/linux-x64-musl/changelog"
+  win-x64: "./bin/win-x64/changelog.exe"
+  darwin-arm64: "./bin/darwin-arm64/changelog"
+  darwin-x64: "./bin/darwin-x64/changelog"
+
+pack:
+  prePackCommand: "bun run build"
+  dir: "./.bin-upload"
+
+npm:
+  readmeFile: "README.md"
+  licenseFile: "LICENSE"
+  packageJson:
+    name: "@d-dev/changelog"
+    version: <%= vars.gitTag %>
+    description: "A CLI tool for managing changelogs in your project"
+    license: "MIT"
+  binaryPackages:
+    linux-arm64:
+      name: "@d-dev/changelog-linux-arm64"
+      os: "linux"
+      arch: "arm64"
+    linux-x64:
+      name: "@d-dev/changelog-linux-x64"
+      os: "linux"
+      arch: "x64"
+    win-x64:
+      name: "@d-dev/changelog-win-x64"
+      os: "win32"
+      arch: "x64"
+    darwin-arm64:
+      name: "@d-dev/changelog-darwin-arm64"
+      os: "darwin"
+      arch: "arm64"
+    darwin-x64:
+      name: "@d-dev/changelog-darwin-x64"
+      os: "darwin"
+      arch: "x64"
+  publish:
+    access: "public"
+    tag: "latest"
+
+pypi:
+  readmeFile: "README.md"
+  platformTags:
+    linux-arm64: "manylinux_2_17_aarch64"
+    linux-arm64-musl: "musllinux_1_2_aarch64"
+    linux-x64: "manylinux_2_17_x86_64"
+    linux-x64-musl: "musllinux_1_2_x86_64"
+    win-x64: "win_amd64"
+    darwin-arm64: "macosx_11_0_arm64"
+    darwin-x64: "macosx_10_9_x86_64"
+  metadata:
+    Name: "changesets"
+    Version: <%= vars.gitTag %>
+    Summary: "A CLI tool for managing changelogs in your project"
+    Requires-Python: ">=3.11"
+
+github:
+  owner: "dworthen"
+  repo: "changelog"
+  token: "<%= env.GITHUB_TOKEN %>"
+  release:
+    tag_name: "v<%= vars.gitTag %>"
+  archives:
+    linux-arm64: "tar.gz"
+    linux-arm64-musl: "tar.gz"
+    linux-x64: "tar.gz"
+    linux-x64-musl: "tar.gz"
+    win-x64: "zip"
+    darwin-arm64: "tar.gz"
+    darwin-x64: "tar.gz"

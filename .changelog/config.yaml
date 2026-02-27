@@ -1,43 +1,12 @@
-version: 0.4.1
+currentVersion: 0.4.1
 changelogFile: CHANGELOG.md
-files:
-    - path: internal/versioninfo/updater.config.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/changelog/package.json
-      pattern: :\s*"(\d+\.\d+\.\d+)"
-    - path: js/darwin-arm64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/darwin-x64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/linux-arm64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/linux-x64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/win32-arm64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: js/win32-x64/package.json
-      pattern: '"version":\s*"(\d+\.\d+\.\d+)"'
-    - path: python/changelog/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/changelog/pyproject.toml
-      pattern: ==\s*(\d+\.\d+\.\d+);
-    - path: python/darwin-arm64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/darwin-x64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/linux-arm64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/linux-x64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/win32-arm64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-    - path: python/win32-x64/pyproject.toml
-      pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-onAdd:
-    commitFiles: true
-onApply:
-    commitFiles: true
-    tagCommit: true
-    tagFormat: v{{version}}
-    commands:
-        - go tool task tidy
+git:
+  mainBranch: "origin/main"
+versionFiles:
+  - path: package.json
+    pattern: :\s*"(\d+\.\d+\.\d+)"
+  - path: pyproject.toml
+    pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
+apply:
+  postCommands:
+    - bun install

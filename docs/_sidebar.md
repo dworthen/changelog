@@ -1,0 +1,12 @@
+- Getting Started
+  - [Quick Start](/)
+  - [How it Works](/how-it-works)
+  - [Migrating](/migrating)
+  - [Git Flow](/git-flow)
+- Customization
+  - [Configuration](/configuration)
+- CLI
+  - [Commands](/commands)
+- Tutorials
+  - [Managing JS Projects](/tutorials/js)
+  - [Managing Python Projects](/tutorials/python)

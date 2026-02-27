@@ -16,7 +16,7 @@
     "changelog:apply": "bun run src/index.ts apply",
     "build": "bun run scripts/build.ts",
     "pack": "bin-upload pack",
-    "publish": "bin-upload publish",
+    "publish": "bin-upload publish -s \"github.release.body=$(bun run src/index.ts view latest)\"",
     "docs": "docsify serve docs -p 3000"
   },
   "devDependencies": {

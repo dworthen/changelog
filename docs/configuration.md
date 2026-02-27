@@ -35,9 +35,9 @@ apply:
 
 ### `git`
 
-| Property     | Type     | Required | Default | Description                                                                                                                |
-| ------------ | -------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `mainBranch` | `string` | Yes      | `main`  | The main/default git branch name. Used by the [`check`](/commands?id=changelog-check) command to determine the merge base. |
+| Property     | Type     | Required | Default       | Description                                                                                                                |
+| ------------ | -------- | -------- | ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `mainBranch` | `string` | Yes      | `origin/main` | The main/default git branch name. Used by the [`check`](/commands?id=changelog-check) command to determine the merge base. |
 
 ### `versionFiles`
 

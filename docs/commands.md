@@ -35,7 +35,7 @@ Creates the following directory structure:
 | ------------------- | -------------------------------------------------------- | -------------- |
 | Current version     | The current semver version of your project               | —              |
 | Changelog file path | Path to the generated changelog file                     | `CHANGELOG.md` |
-| Main git branch     | The main/default branch name                             | `main`         |
+| Main git branch     | The main/default branch name                             | `origin/main`  |
 | Post-apply commands | Shell commands to run after `apply` (repeat until blank) | —              |
 
 **Example:**

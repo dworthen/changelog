@@ -1,7 +1,7 @@
 currentVersion: 0.4.1
 changelogFile: CHANGELOG.md
 git:
-  mainBranch: main
+  mainBranch: "origin/main"
 versionFiles:
   - path: package.json
     pattern: :\s*"(\d+\.\d+\.\d+)"

@@ -30,7 +30,7 @@ export const initCommand = createCommand(
 
     const mainBranch = await input({
       message: 'Main git branch:',
-      default: 'main',
+      default: 'origin/main',
       validate: (value) => value.length > 0 || 'Required',
     })
 

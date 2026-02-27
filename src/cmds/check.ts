@@ -12,7 +12,7 @@ export const checkCommand = createCommand(
   },
   async () => {
     const config = await loadConfig()
-    const mainBranch = config.git.mainBranch
+    const mainBranch = config.git.mainBranch.trim()
 
     const mergeBase = (await $`git merge-base ${mainBranch} HEAD`.text()).trim()
 

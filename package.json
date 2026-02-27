@@ -29,7 +29,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@d-dev/roar": "../roar/roar/d-dev-roar-0.0.2.tgz",
+    "@d-dev/roar": "^0.0.3",
     "@inquirer/prompts": "^8.3.0",
     "eta": "^4.5.1",
     "meow": "^14.1.0",

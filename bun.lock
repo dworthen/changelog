@@ -5,7 +5,7 @@
     "": {
       "name": "changelog",
       "dependencies": {
-        "@d-dev/roar": "../roar/roar/d-dev-roar-0.0.2.tgz",
+        "@d-dev/roar": "^0.0.3",
         "@inquirer/prompts": "^8.3.0",
         "eta": "^4.5.1",
         "meow": "^14.1.0",
@@ -53,7 +53,7 @@
 
     "@d-dev/bin-upload-win-x64": ["@d-dev/bin-upload-win-x64@0.1.0", "", { "os": "win32", "cpu": "x64" }, "sha512-i6MLdiuEPOZhUqr+RA9nAautuNekeXuVUL8cS/IT0FcM55yyZ9ehYTrvESSfuuA/yfKjpVAAl5LwkSQj7LZjNA=="],
 
-    "@d-dev/roar": ["@d-dev/roar@../roar/roar/d-dev-roar-0.0.2.tgz", { "dependencies": { "meow": "^14.1.0" } }],
+    "@d-dev/roar": ["@d-dev/roar@0.0.3", "", { "dependencies": { "meow": "^14.1.0" } }, "sha512-mJNIsS0k7TzFtK/JKgQjMsTPhphYz5v/qXPn7cYZuhery/pQfHHCyVXaIA1OmWvkG9TMOvTgyYyimm2JQQ09NA=="],
 
     "@inquirer/ansi": ["@inquirer/ansi@2.0.3", "", {}, "sha512-g44zhR3NIKVs0zUesa4iMzExmZpLUdTLRMCStqX3GE5NT6VkPcxQGJ+uC8tDgBUC/vB1rUhUd55cOf++4NZcmw=="],
 

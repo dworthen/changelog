@@ -1,12 +1,12 @@
-currentVersion: 1.0.0
+currentVersion: 1.0.1
 changelogFile: CHANGELOG.md
-git:
+git: 
   mainBranch: origin/main
-versionFiles:
+versionFiles: 
   - path: package.json
-    pattern: :\s*"(\d+\.\d+\.\d+)"
+    pattern: ":\\s*\"(\\d+\\.\\d+\\.\\d+)\""
   - path: pyproject.toml
-    pattern: version\s*=\s*"(\d+\.\d+\.\d+)"
-apply:
-  postCommands:
+    pattern: "version\\s*=\\s*\"(\\d+\\.\\d+\\.\\d+)\""
+apply: 
+  postCommands: 
     - bun install

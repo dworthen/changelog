@@ -1,7 +1,6 @@
 import { readdirSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { createCommand } from '@d-dev/roar'
-import { parse } from 'yaml'
 import {
   buildReleaseData,
   generateChangelog,
@@ -76,7 +75,7 @@ export async function viewHandler(argument?: string): Promise<string | null> {
   }
   const filePath = join(releasesDir, matchFile)
   const text = await Bun.file(filePath).text()
-  const release = parse(text) as ReleaseData
+  const release = Bun.YAML.parse(text) as ReleaseData
   const bodyTemplate = await loadBodyTemplate()
   const rendered = renderRelease(bodyTemplate, release)
   return rendered

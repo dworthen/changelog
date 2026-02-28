@@ -1,6 +1,5 @@
 import { createCommand } from '@d-dev/roar'
 import { input, select } from '@inquirer/prompts'
-import { stringify } from 'yaml'
 import {
   buildReleaseData,
   generateChangelog,
@@ -33,7 +32,11 @@ export const addCommand = createCommand(
 
     const timestamp = Date.now()
     const filename = `${timestamp}.yaml`
-    const entryYaml = stringify({ timestamp, type, description })
+    const entryYaml = Bun.YAML.stringify(
+      { timestamp, type, description },
+      null,
+      2,
+    )
 
     await Bun.write(`.changelog/next/${filename}`, entryYaml)
     console.log(`✓ Added changelog entry: .changelog/next/${filename}`)

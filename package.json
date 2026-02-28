@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
-    "@d-dev/bin-upload": "latest",
+    "@d-dev/bin-upload": "^0.1.1",
     "@types/bun": "latest",
     "docsify-cli": "^4.4.4"
   },
@@ -32,7 +32,6 @@
     "@d-dev/roar": "^0.0.3",
     "@inquirer/prompts": "^8.3.0",
     "eta": "^4.5.1",
-    "meow": "^14.1.0",
-    "yaml": "^2.8.2"
+    "meow": "^14.1.0"
   }
 }

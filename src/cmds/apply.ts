@@ -3,7 +3,6 @@ import { join } from 'node:path'
 import { createCommand } from '@d-dev/roar'
 import { confirm } from '@inquirer/prompts'
 import { $ } from 'bun'
-import { stringify } from 'yaml'
 import {
   buildReleaseData,
   generateChangelog,
@@ -38,12 +37,16 @@ export const applyCommand = createCommand(
     const releaseData = await buildReleaseData(newVersion, entries)
 
     // Write release file
-    const releaseYaml = stringify({
-      timestamp: releaseData.timestamp,
-      version: releaseData.version,
-      changeTypes: releaseData.changeTypes,
-      changes: releaseData.changes,
-    })
+    const releaseYaml = Bun.YAML.stringify(
+      {
+        timestamp: releaseData.timestamp,
+        version: releaseData.version,
+        changeTypes: releaseData.changeTypes,
+        changes: releaseData.changes,
+      },
+      null,
+      2,
+    )
     await Bun.write(`.changelog/releases/${newVersion}.yaml`, releaseYaml)
 
     // Delete all .yaml files in .changelog/next

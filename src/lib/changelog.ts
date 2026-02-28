@@ -1,6 +1,5 @@
 import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { parse } from 'yaml'
 
 import { renderString } from './eta'
 import { getFileSha, getShortSha } from './git'
@@ -32,7 +31,7 @@ export async function loadNextEntries(): Promise<NextEntry[]> {
     const filePath = join(dir, file)
     try {
       const text = await Bun.file(filePath).text()
-      const data = parse(text)
+      const data = Bun.YAML.parse(text) as NextEntry
       entries.push({
         filePath,
         timestamp: data.timestamp,
@@ -119,7 +118,7 @@ export async function loadReleases(): Promise<ReleaseData[]> {
     const filePath = join(dir, file)
     try {
       const text = await Bun.file(filePath).text()
-      const data = parse(text) as ReleaseData
+      const data = Bun.YAML.parse(text) as ReleaseData
       releases.push(data)
     } catch (err) {
       console.warn(`Warning: Could not parse ${filePath}: ${err}`)

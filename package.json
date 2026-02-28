@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.4",
-    "@d-dev/bin-upload": "latest",
+    "@d-dev/bin-upload": "^0.1.1",
     "@types/bun": "latest",
     "docsify-cli": "^4.4.4"
   },

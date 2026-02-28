@@ -9,7 +9,6 @@
         "@inquirer/prompts": "^8.3.0",
         "eta": "^4.5.1",
         "meow": "^14.1.0",
-        "yaml": "^2.8.2",
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.4",
@@ -464,8 +463,6 @@
     "y18n": ["y18n@4.0.3", "", {}, "sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ=="],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
-
-    "yaml": ["yaml@2.8.2", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A=="],
 
     "yargonaut": ["yargonaut@1.1.4", "", { "dependencies": { "chalk": "^1.1.1", "figlet": "^1.1.1", "parent-require": "^1.0.0" } }, "sha512-rHgFmbgXAAzl+1nngqOcwEljqHGG9uUZoPjsdZEs1w5JW9RXYzrSvH/u70C1JE5qFi0qjsdhnUX/dJRpWqitSA=="],
 

@@ -1,4 +1,3 @@
-import { parse, stringify } from 'yaml'
 import { type Config } from './types'
 
 const CONFIG_PATH = '.changelog/config.yaml'
@@ -13,10 +12,10 @@ export async function loadConfig(): Promise<Config> {
     process.exit(1)
   }
   const text = await file.text()
-  return parse(text) as Config
+  return Bun.YAML.parse(text) as Config
 }
 
 export async function saveConfig(config: Config): Promise<void> {
-  const text = stringify(config)
+  const text = Bun.YAML.stringify(config, null, 2)
   await Bun.write(CONFIG_PATH, text)
 }

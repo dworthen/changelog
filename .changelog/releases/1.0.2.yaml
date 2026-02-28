@@ -1,0 +1,10 @@
+timestamp: 1772285101007
+version: 1.0.2
+changeTypes: 
+  - Fix
+changes: 
+  - type: Fix
+    timestamp: 1772285071799
+    sha: f1a1c2fec40e196c7ef7ffcdd606af3139505bea
+    shortSha: f1a1c2f
+    description: Fix - handle exit during user prompt.

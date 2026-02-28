@@ -19,6 +19,15 @@ npm:
     version: <%= vars.gitTag %>
     description: "A CLI tool for managing changelogs in your project"
     license: "MIT"
+    repository: "github:dworthen/changelog"
+    homepage: "https://dworthen.github.io/changelog"
+    author: "Drew Worthen <worthend.derek@gmail.com>"
+    keywords:
+      - changelog
+      - cli
+      - tool
+      - release
+      - management
   binaryPackages:
     linux-arm64:
       name: "@d-dev/changelog-linux-arm64"
@@ -59,6 +68,11 @@ pypi:
     Version: <%= vars.gitTag %>
     Summary: "A CLI tool for managing changelogs in your project"
     Requires-Python: ">=3.11"
+    Author: "Derek Worthen <worthend.derek@gmail.com>"
+    Requires-Python: ">=3.11"
+    Project-URL: source, https://github.com/dworthen/changelog
+    Project-URL: homepage, https://dworthen.github.io/changelog
+    keywords: changelog, cli, tool, release, management
 
 github:
   owner: "dworthen"

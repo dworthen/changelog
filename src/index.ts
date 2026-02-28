@@ -9,6 +9,14 @@ import { initCommand } from './cmds/init.js'
 import { versionCommand } from './cmds/version.js'
 import { viewCommand } from './cmds/view.js'
 
+process.on('uncaughtException', (error) => {
+  if (error instanceof Error && error.name === 'ExitPromptError') {
+    console.log('👋 until next time!')
+  } else {
+    throw error
+  }
+})
+
 const changelogCommand = createCommand({
   usageName: 'changelog',
   description: pkg.description,

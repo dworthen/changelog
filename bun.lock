@@ -12,7 +12,7 @@
       },
       "devDependencies": {
         "@biomejs/biome": "^2.4.4",
-        "@d-dev/bin-upload": "^0.1.1",
+        "@d-dev/bin-upload": "^0.2.0",
         "@types/bun": "latest",
         "docsify-cli": "^4.4.4",
       },
@@ -40,17 +40,19 @@
 
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.4.4", "", { "os": "win32", "cpu": "x64" }, "sha512-gnOHKVPFAAPrpoPt2t+Q6FZ7RPry/FDV3GcpU53P3PtLNnQjBmKyN2Vh/JtqXet+H4pme8CC76rScwdjDcT1/A=="],
 
-    "@d-dev/bin-upload": ["@d-dev/bin-upload@0.1.1", "", { "optionalDependencies": { "@d-dev/bin-upload-darwin-arm64": "0.1.1", "@d-dev/bin-upload-darwin-x64": "0.1.1", "@d-dev/bin-upload-linux-arm64": "0.1.1", "@d-dev/bin-upload-linux-x64": "0.1.1", "@d-dev/bin-upload-win-x64": "0.1.1" }, "bin": { "bin-upload": "index.js" } }, "sha512-aRjV1ZIX8JYfQ7O2p5WbV76OxejzqAr2P9q4L/jkCBs0Wn0rflVAx+O4cPSh2uI98HhrC5oeHHTmhCmpF75pQw=="],
+    "@d-dev/bin-upload": ["@d-dev/bin-upload@0.2.0", "", { "optionalDependencies": { "@d-dev/bin-upload-darwin-arm64": "0.2.0", "@d-dev/bin-upload-darwin-x64": "0.2.0", "@d-dev/bin-upload-linux-arm64": "0.2.0", "@d-dev/bin-upload-linux-x64": "0.2.0", "@d-dev/bin-upload-win-arm64": "0.2.0", "@d-dev/bin-upload-win-x64": "0.2.0" }, "bin": { "bin-upload": "index.js" } }, "sha512-3B6IQsQy0cr2MxriNJOxPAX71MfM+GI+vsEN5FdJcXm/4cyxlR9BlRjgNqLZzmaTLHxAH/blPlC2hMSNf7F4VQ=="],
 
-    "@d-dev/bin-upload-darwin-arm64": ["@d-dev/bin-upload-darwin-arm64@0.1.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-RjqW1+H/Cluw/KlS1OWbWinibIUFvnmjdJVhhc2jNJ5nPwDo/26kZ4OeY8vBlSCFkWnV8NzIXSXhC3vpcEANFw=="],
+    "@d-dev/bin-upload-darwin-arm64": ["@d-dev/bin-upload-darwin-arm64@0.2.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-zcKJqo42EN3SmlNimovVsSm0ZIF2UbEqs23K1Q99pRME3VrvSFE6dgDiksmc0UbuGnfvtM2J78AO+RJizRjkDA=="],
 
-    "@d-dev/bin-upload-darwin-x64": ["@d-dev/bin-upload-darwin-x64@0.1.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-X/ZPKgnZLa1VRUY10TeefXTmN6a5tQrCw5MTuEuuyRolMhzxmE4gwSKAn32RO5TAhha6GRm84ElNk2W9/GlaFg=="],
+    "@d-dev/bin-upload-darwin-x64": ["@d-dev/bin-upload-darwin-x64@0.2.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-1HsS4+G8IbX7/f9pPR6iuMP/9mdM0p4T01Js2M7YIXRtqktgXc7Qd3/bXX9IDN64QoPMsD5EgZzqgCAxS3m85g=="],
 
-    "@d-dev/bin-upload-linux-arm64": ["@d-dev/bin-upload-linux-arm64@0.1.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-lHeVWjchR3gp2lcrMTcGWoMBirGxcsheTJAXqKjDzAuYsJ+nJ1PUq9FGE95iK1NjGSKKTuK3fiOdiyTEgV8K7g=="],
+    "@d-dev/bin-upload-linux-arm64": ["@d-dev/bin-upload-linux-arm64@0.2.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-aq34nKn0ugyLMJ4Y+BMshR6/eIINUomGNqYLfnDwuf0ijk3wcNH/t65Bb9BmnETlNslvLJ0KU+XyusuLyG/eOQ=="],
 
-    "@d-dev/bin-upload-linux-x64": ["@d-dev/bin-upload-linux-x64@0.1.1", "", { "os": "linux", "cpu": "x64" }, "sha512-WS+vVH1u3OouV0v3Tn+IMQlJfr4qB8OSpH/qtgTGhXJPyfutMs7LDCWBrKJuN5XJCmuNzAbtefKNpsHwy38tWA=="],
+    "@d-dev/bin-upload-linux-x64": ["@d-dev/bin-upload-linux-x64@0.2.0", "", { "os": "linux", "cpu": "x64" }, "sha512-87wRiQGQbeDIqY4JV98aYwtTLOj/mMkYt1jTOskm9V73IxUDP/dEvUmPjPzd7uAsOSzQt5jSzft28EGmbnWufA=="],
 
-    "@d-dev/bin-upload-win-x64": ["@d-dev/bin-upload-win-x64@0.1.1", "", { "os": "win32", "cpu": "x64" }, "sha512-4nS230Zprtu2qFltMYmrkpGsz0E5xA47ehbi7gzneN4By5/8eyqNUFbtX4AGNOEcKrNUVzKjBB/E7+nS6RoP5w=="],
+    "@d-dev/bin-upload-win-arm64": ["@d-dev/bin-upload-win-arm64@0.2.0", "", { "os": "win32", "cpu": "arm64" }, "sha512-FIsLwEBOH7bs7FmMY0lMFe/TgwuHE8+PVzoHhqZ0Heb74KE+7adUedZOWvVzdc92ZIWevRVpb1z9fQeEvhdchw=="],
+
+    "@d-dev/bin-upload-win-x64": ["@d-dev/bin-upload-win-x64@0.2.0", "", { "os": "win32", "cpu": "x64" }, "sha512-2z4E5yNTBluI8lQvQv/l/Yc/He2jFcv0hdiXXw9DRAXSw5HDvHqdeaN1k4w7wBa+s2mgu2Al618cQBEO4jmLjA=="],
 
     "@d-dev/roar": ["@d-dev/roar@0.0.3", "", { "dependencies": { "meow": "^14.1.0" } }, "sha512-mJNIsS0k7TzFtK/JKgQjMsTPhphYz5v/qXPn7cYZuhery/pQfHHCyVXaIA1OmWvkG9TMOvTgyYyimm2JQQ09NA=="],
 

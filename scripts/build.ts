@@ -7,6 +7,7 @@ const builds: Record<string, string> = {
   'bun-linux-x64-modern': 'bin/linux-x64/changelog',
   'bun-linux-x64-musl-modern': 'bin/linux-x64-musl/changelog',
   'bun-windows-x64-modern': 'bin/win-x64/changelog',
+  'bun-windows-arm64': 'bin/win-arm64/changelog',
   'bun-darwin-arm64': 'bin/darwin-arm64/changelog',
   'bun-darwin-x64': 'bin/darwin-x64/changelog',
 }

@@ -4,6 +4,7 @@ binaries:
   linux-x64: "./bin/linux-x64/changelog"
   linux-x64-musl: "./bin/linux-x64-musl/changelog"
   win-x64: "./bin/win-x64/changelog.exe"
+  win-arm64: "bin/win-arm64/changelog.exe"
   darwin-arm64: "./bin/darwin-arm64/changelog"
   darwin-x64: "./bin/darwin-x64/changelog"
 
@@ -41,6 +42,10 @@ npm:
       name: "@d-dev/changelog-win-x64"
       os: "win32"
       arch: "x64"
+    win-arm64:
+      name: "@d-dev/changelog-win-arm64"
+      os: "win32"
+      arch: "arm64"
     darwin-arm64:
       name: "@d-dev/changelog-darwin-arm64"
       os: "darwin"
@@ -61,6 +66,7 @@ pypi:
     linux-x64: "manylinux_2_17_x86_64"
     linux-x64-musl: "musllinux_1_2_x86_64"
     win-x64: "win_amd64"
+    win-arm64: "win_arm64"
     darwin-arm64: "macosx_11_0_arm64"
     darwin-x64: "macosx_10_9_x86_64"
   metadata:
@@ -86,5 +92,6 @@ github:
     linux-x64: "tar.gz"
     linux-x64-musl: "tar.gz"
     win-x64: "zip"
+    win-arm64: "zip"
     darwin-arm64: "tar.gz"
     darwin-x64: "tar.gz"

@@ -57,6 +57,8 @@ npm:
   publish:
     access: "public"
     tag: "latest"
+    # "registry=https://registry.npmjs.org/": true
+    # "//registry.npmjs.org/:_authToken=<%= env.NPM_TOKEN %>": true
 
 pypi:
   readmeFile: "README.md"
@@ -79,6 +81,8 @@ pypi:
     Project-URL: source, https://github.com/dworthen/changelog
     Project-URL: homepage, https://dworthen.github.io/changelog
     keywords: changelog, cli, tool, release, management
+  # publish:
+  #   token: "<%= env.PYPI_TOKEN %>"
 
 github:
   owner: "dworthen"

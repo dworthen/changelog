@@ -53,19 +53,28 @@ Enter post-apply commands (leave blank to finish):
 
 ## `changelog add`
 
-Interactively add a new changelog entry.
+Add a new changelog entry, either interactively or non-interactively via flags.
 
 **Usage:**
 
 ```bash
-changelog add
+changelog add [--type <type> --message <message>]
 ```
 
 **What it does:**
 
-1. Prompts for a change type and description.
+1. Gathers a change type and description — interactively by prompt, or from the `--type` and `--message` flags.
 2. Writes a timestamped YAML file to `.changelog/next/`.
 3. Regenerates the changelog file with an "Unreleased" section.
+
+**Flags:**
+
+| Flag        | Alias | Description                                                                             |
+| ----------- | ----- | -------------------------------------------------------------------------------------- |
+| `--type`    | `-t`  | Change type. One of Add, Change, Deprecate, Remove, Fix, Internal (case-insensitive).  |
+| `--message` | `-m`  | A short description of the change.                                                      |
+
+`--type` and `--message` are optional, but must be used together — providing only one is an error. When both are supplied, the interactive prompts are skipped.
 
 **Interactive prompts:**
 
@@ -91,6 +100,14 @@ changelog add
 $ changelog add
 ? Change type: Add - Add a new feature. Minor version bump.
 ? Description: Support for YAML configuration files
+✓ Added changelog entry: .changelog/next/1740000000000.yaml
+✓ Updated CHANGELOG.md
+```
+
+Non-interactively, with flags (prompts are skipped):
+
+```bash
+$ changelog add --type Add --message "Support for YAML configuration files"
 ✓ Added changelog entry: .changelog/next/1740000000000.yaml
 ✓ Updated CHANGELOG.md
 ```

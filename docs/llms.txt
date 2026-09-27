@@ -28,7 +28,7 @@ Interactive setup wizard. Creates `.changelog/` directory with `config.yaml`, `n
 
 ### `changelog add`
 
-Interactively add a changelog entry. Prompts for change type (Add, Change, Deprecate, Remove, Fix, Internal) and description. Writes a timestamped YAML file to `.changelog/next/`. Regenerates the changelog with an "Unreleased" section.
+Add a changelog entry, interactively or via flags. Interactively, prompts for change type (Add, Change, Deprecate, Remove, Fix, Internal) and description. Alternatively, pass `--type`/`-t` (case-insensitive change type) and `--message`/`-m` (description) to skip the prompts; the two flags are optional but must be used together. Writes a timestamped YAML file to `.changelog/next/`. Regenerates the changelog with an "Unreleased" section.
 
 ### `changelog apply`
 

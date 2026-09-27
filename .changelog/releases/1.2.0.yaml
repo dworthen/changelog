@@ -1,0 +1,10 @@
+timestamp: 1790485651754
+version: 1.2.0
+changeTypes: 
+  - Add
+changes: 
+  - type: Add
+    timestamp: 1790485047591
+    sha: 00720b678425b0b736dc31edce9281d8fc6c484c
+    shortSha: 00720b6
+    description: "add --type/-t and --message/-m flags to `add` command to skip interactive prompts"

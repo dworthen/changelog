@@ -1,0 +1,3 @@
+timestamp: 1790485047591
+type: Add
+description: "add --type/-t and --message/-m flags to `add` command to skip interactive prompts"

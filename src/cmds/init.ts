@@ -53,7 +53,7 @@ export const initCommand = createCommand(
       versionFiles: [
         {
           path: 'package.json',
-          pattern: ':\\s*"(\\d+\\.\\d+\\.\\d+)"',
+          pattern: '"version":\\s*"(\\d+\\.\\d+\\.\\d+)"',
         },
         {
           path: 'pyproject.toml',
